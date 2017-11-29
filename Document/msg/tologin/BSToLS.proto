@@ -1,0 +1,14 @@
+package BSToLS;
+
+enum MsgID
+{
+	eMsgToLSFromBS_Begin = 40960;
+	eMsgToLSFromBS_AskRegister = 40961;    //login连接注册到bs
+	eMsgToLSFromBC_OneClinetLoginCheck = 40962; //客户端登录检测（验证 sdk 里面的usermap 是否有此人， （名字不能重））
+	eMsgToLSFromBS_End = 41000;
+}
+
+message AskRegister
+{
+	optional MsgID msgid = 1[default = eMsgToLSFromBS_AskRegister];
+}

@@ -1,0 +1,22 @@
+package LSToBS;
+
+enum MsgID
+{
+	eMsgToBSFromLS_Begin = 32768;
+	eMsgToBSFromLS_AskRegisterRet = 32769; //设置连接为true
+	eMsgToBSFromLS_OneClinetLoginCheckRet = 32770;//(tols 请求分配gs给用户, 连接gc)
+	eMsgToBSFromLS_End = 32800;
+}
+
+message AskRegisterRet
+{
+	optional MsgID msgid = 1[default = eMsgToBSFromLS_AskRegisterRet];
+}
+
+message UserLoginToken
+{
+	optional MsgID msgid = 1[default = eMsgToBSFromLS_OneClinetLoginCheckRet];
+	optional string uin = 2;
+	optional string sessionid = 3;
+	optional uint32 platform = 4;
+}
