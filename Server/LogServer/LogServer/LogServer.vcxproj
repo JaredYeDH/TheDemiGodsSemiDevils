@@ -124,6 +124,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\CommonCPlus\Generated;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,6 +139,9 @@
     <ClInclude Include="..\..\CommonCPlus\DBActiveWrapper.h" />
     <ClInclude Include="..\..\CommonCPlus\DBMgr.h" />
     <ClInclude Include="..\..\CommonCPlus\ELogging.h" />
+    <ClInclude Include="..\..\CommonCPlus\Generated\string_proto.h" />
+    <ClInclude Include="..\..\CommonCPlus\Generated\table.h" />
+    <ClInclude Include="..\..\CommonCPlus\Generated\tabledef.h" />
     <ClInclude Include="..\..\ELogging\ELoggingHeader.h" />
     <ClInclude Include="..\..\ELogging\ELogging\SSActive.h" />
     <ClInclude Include="..\..\ELogging\ELogging\stdafx.h" />
@@ -159,6 +163,7 @@
     <ClCompile Include="..\..\CommonCPlus\CSDataSource.cpp" />
     <ClCompile Include="..\..\CommonCPlus\DBActiveWrapper.cpp" />
     <ClCompile Include="..\..\CommonCPlus\DBMgr.cpp" />
+    <ClCompile Include="..\..\CommonCPlus\Generated\table.cpp" />
     <ClCompile Include="..\..\ELogging\ELogging\SSActive.cpp" />
     <ClCompile Include="..\..\ELogging\ELogging\Timer.cpp" />
     <ClCompile Include="..\..\Share\Net\ICliSession.cpp" />

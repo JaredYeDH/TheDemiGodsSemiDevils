@@ -21,6 +21,9 @@
     <Filter Include="DB">
       <UniqueIdentifier>{de1ae800-4a96-42de-a49b-e73f9acd9f36}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Generated">
+      <UniqueIdentifier>{a7d67318-0ee9-40da-a6d6-0386a005a715}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -83,6 +86,15 @@
     <ClInclude Include="..\..\ThirdFunc\MsgLists\ParseProto.h">
       <Filter>ProtobufMsg</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\CommonCPlus\Generated\table.h">
+      <Filter>Generated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\CommonCPlus\Generated\tabledef.h">
+      <Filter>Generated</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\CommonCPlus\Generated\string_proto.h">
+      <Filter>Generated</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -135,6 +147,9 @@
     </ClCompile>
     <ClCompile Include="..\..\ThirdFunc\MsgLists\ParseProto.cpp">
       <Filter>ProtobufMsg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\CommonCPlus\Generated\table.cpp">
+      <Filter>Generated</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,0 +1,3 @@
+技能ID|||entry(int32)	技能名称|SkllName(string)	技能描述|Describe(string)	技能美术资源|ArtResource(string)	动作ID|||ActionId(int32)	施法时间|||NeedTime(int32)	技能消耗类型|||Type(int32)	技能消耗|||Consume(int32)	相同技能类型ID不生效|||SameType(int32)	技能片段ID1|||SkllFragmentId1(int32)	技能片段ID2|||SkllFragmentId2(int32)	技能片段ID3|||SkllFragmentId3(int32)	技能片段ID4|||SkllFragmentId4(int32)	技能片段ID5|||SkllFragmentId5(int32)
+1001	寒冰掌1	发射一颗固定子弹，对敌人造成200点冰属性元素伤害，增加10%元素伤害，额外增加30点固定元素伤害,30%几率对敌人造成冰缓效果，移动速度减少40%，攻击速度减少20%	-1	1	1500	2	20	1	101	201	301	-1	-1
+1002	寒冰掌2	发射一颗固定子弹，对敌人造成210点冰属性元素伤害，增加15%元素伤害，额外增加50点固定元素伤害，35%几率对敌人造成冰缓效果，移动速度减少45%，攻击速度减少25%	-1	1	1500	2	25	1	101	202	302	-1	-1

@@ -1,0 +1,2 @@
+动作ID|||entry(int32)	动作描述|Explain(string)	前摇时间|FirstTime(int32)	后摇时间|AfterTime(int32)	动作资源|ActionResource(string)
+1	无，不读	500	500	-1

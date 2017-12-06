@@ -1,0 +1,7 @@
+技能片段ID|||entry(int32)	技能描述|Explain(string)	技能逻辑|||SkllLogic(int32)	技能参数1|||SkllParameter1(int32)	技能参数2|||SkllParameter2(int32)	技能参数3|||SkllParameter3(int32)	技能参数4|||SkllParameter4(int32)	技能参数5|||SkllParameter5(int32)	技能参数6|||SkllParameter6(int32)	技能参数7|||SkllParameter7(int32)	技能参数8|||SkllParameter8(int32)	技能参数9|||SkllParameter9(int32)	技能参数10|||SkllParameter10(int32)	技能参数11|||SkllParameter11(int32)	技能参数12|||SkllParameter12(int32)	技能参数13|||SkllParameter13(int32)	技能参数14|||SkllParameter14(int32)	技能参数15|||SkllParameter15(int32)
+101	常规固定子弹，不穿透1	1	1	10	10	20	1	-1	-1	-1	-1	-1	-1	-1	-1	-1	-1
+102	常规固定子弹，不穿透2	1	1	15	10	30	1	-1	-1	-1	-1	-1	-1	-1	-1	-1	-1
+201	对敌人造成200点冰属性元素伤害，增加10%冰元素伤害，额外增加30点固定元素伤害	3	95	3	0	4	200	10	30	-1	-1	-1	-1	-1	-1	-1	-1
+202	对敌人造成210点冰属性元素伤害，增加15%冰元素伤害，额外增加50点固定元素伤害	3	95	3	0	4	210	15	50	-1	-1	-1	-1	-1	-1	-1	-1
+301	30%几率对敌人造成冰缓效果，移动速度减少40%，攻击速度减少20%	5	30	5	1	1	1	1	-40	-20	-1	-1	-1	-1	-1	-1	-1
+302	35%几率对敌人造成冰缓效果，移动速度减少45%，攻击速度减少25%	5	35	5	1	1	1	1	-45	-25	-1	-1	-1	-1	-1	-1	-1
