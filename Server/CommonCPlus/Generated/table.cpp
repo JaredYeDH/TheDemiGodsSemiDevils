@@ -104,72 +104,56 @@ bool load_SkllFragment_config()
 		FastProto::SkllFragment_config* tabNote = tabList+index;
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->entry = atoi(val);
+		tabNote->entry = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->SkllLogic = atoi(val);
+		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
+		tabNote->SkllLogic = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->SkllParameter1 = atoi(val);
+		tabNote->SkllParameter1 = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->SkllParameter2 = atoi(val);
+		tabNote->SkllParameter2 = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->SkllParameter3 = atoi(val);
+		tabNote->SkllParameter3 = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->SkllParameter4 = atoi(val);
+		tabNote->SkllParameter4 = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->SkllParameter5 = atoi(val);
+		tabNote->SkllParameter5 = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->SkllParameter6 = atoi(val);
+		tabNote->SkllParameter6 = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->SkllParameter7 = atoi(val);
+		tabNote->SkllParameter7 = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->SkllParameter8 = atoi(val);
+		tabNote->SkllParameter8 = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->SkllParameter9 = atoi(val);
+		tabNote->SkllParameter9 = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->SkllParameter10 = atoi(val);
+		tabNote->SkllParameter10 = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->SkllParameter11 = atoi(val);
+		tabNote->SkllParameter11 = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->SkllParameter12 = atoi(val);
+		tabNote->SkllParameter12 = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->SkllParameter13 = atoi(val);
+		tabNote->SkllParameter13 = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->SkllParameter14 = atoi(val);
+		tabNote->SkllParameter14 = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->SkllParameter15 = atoi(val);
+		tabNote->SkllParameter15 = atoi(val);
 
 		if (NULL != ProtoTab::get_SkllFragment_config(tabNote->entry))
 		{
@@ -254,48 +238,40 @@ bool load_Skll_config()
 		FastProto::Skll_config* tabNote = tabList+index;
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->entry = atoi(val);
+		tabNote->entry = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->ActionId = atoi(val);
+		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
+		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
+		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
+		tabNote->ActionId = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->NeedTime = atoi(val);
+		tabNote->NeedTime = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->Type = atoi(val);
+		tabNote->Type = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->Consume = atoi(val);
+		tabNote->Consume = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->SameType = atoi(val);
+		tabNote->SameType = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->SkllFragmentId1 = atoi(val);
+		tabNote->SkllFragmentId1 = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->SkllFragmentId2 = atoi(val);
+		tabNote->SkllFragmentId2 = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->SkllFragmentId3 = atoi(val);
+		tabNote->SkllFragmentId3 = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->SkllFragmentId4 = atoi(val);
+		tabNote->SkllFragmentId4 = atoi(val);
 
 		idx += g_pProtoTab->getsVal(&buf[idx], val, sizeof(val));
-		if (val[0] != 0)
-			tabNote->SkllFragmentId5 = atoi(val);
+		tabNote->SkllFragmentId5 = atoi(val);
 
 		if (NULL != ProtoTab::get_Skll_config(tabNote->entry))
 		{
