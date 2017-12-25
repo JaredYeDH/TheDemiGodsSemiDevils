@@ -8,16 +8,12 @@ var ProtocolMan = require('./ProtocolMan');
 
 var SocketNet = function() {};
 
-SocketNet.prototype.start_server = function(obj, cb)
-{
+SocketNet.prototype.start_server = function(obj, cb) {
     var self = this;
-
     var socket_server;
 
-    if(obj)
-    {
-        for(var key in obj)
-        {
+    if(obj) {
+        for(var key in obj) {
             (function(k){
                 var info = obj[k];
                 if(typeof info.handler === "object")
@@ -130,22 +126,17 @@ SocketNet.prototype.start_server = function(obj, cb)
                 }
             })(key);
         }
-    }
-    else
-    {
+    } else {
         logger.error("-- start no handler server -- ");
     }
 
-    if(socket_server)
-    {
+    if(socket_server) {
         self.socket_server = socket_server;
     }
 
-    if(cb)
-    {
+    if(cb) {
         cb(self);
     }
-    //}
 };
 
 module.exports = SocketNet;
