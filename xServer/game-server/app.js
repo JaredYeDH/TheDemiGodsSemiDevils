@@ -55,6 +55,16 @@ app.configure('production|development', 'zgate', function(){
 			"serverport" : 49996
 		}
 	};
+	var _obj = {
+		"clientcfg" : {
+			"serverip" : "192.168.1.100",
+	    	"serverport" : 49996, 
+			"is_server" : 0,
+			"handler"  : handler,
+	        "retry"   : 1
+	    }
+	};
+
 	var zgate = new SocketNet;
 	if (MsgProtobuf.getInstance().loadProto()) {
 		ProtocolRegistry.register();

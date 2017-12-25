@@ -16,10 +16,8 @@ SocketNet.prototype.start_server = function(obj, cb) {
         for(var key in obj) {
             (function(k){
                 var info = obj[k];
-                if(typeof info.handler === "object")
-                {
-                    if(info.is_server == 1)
-                    {
+                if(typeof info.handler === "object") {
+                    if(info.is_server == 1) {
                         socket_server = net.createServer(function(sock) {
                             var d = domain.create();
                             d.on('error', function (err) {
@@ -35,23 +33,13 @@ SocketNet.prototype.start_server = function(obj, cb) {
                             sock.c_ip= sock.remoteAddress;
                             sock.c_port= sock.remotePort;
 
-                            sock.send=function(buffer){
-                                if(sock.writable) //{
-                                    sock.write(buffer);
-                                /*} else {
-                                    logger.error("socket write err,writable :" + sock.writable);
-                                    sock.emit("c_close");
-                                }*/
-                            }
-
                             var _connection = new Connection({"socket" : sock});
                             _connection.on('data',onReceivePackData);
                             _connection.on('close',onCloseConnection);
 
                             //当服务端收到完整的包时
                             function onReceivePackData(type, buffer) {
-                                try
-                                {
+                                try {
                                     var protocolFunc = ProtocolMan.getInstance().getProtocol(type);
                                     if (!protocolFunc) {
                                         logger.error("unrecognize proto type %d", type);
@@ -60,9 +48,7 @@ SocketNet.prototype.start_server = function(obj, cb) {
                                         var protocol = new protocolFunc();
                                         protocol.execute(_connection, buffer);
                                     }
-                                }
-                                catch(err)
-                                {
+                                } catch(err) {
                                     logger.error("parse receive_data : " + err.stack);
                                     var err_msg = {
                                         "op" : sock.op,
@@ -71,6 +57,15 @@ SocketNet.prototype.start_server = function(obj, cb) {
                                     sock.send(err_msg);
                                     sock.emit("c_close");
                                 }
+                            }
+
+                            sock.send=function(buffer){
+                                if(sock.writable) //{
+                                    sock.write(buffer);
+                                /*} else {
+                                    logger.error("socket write err,writable :" + sock.writable);
+                                    sock.emit("c_close");
+                                }*/
                             }
 
                             //当数据异常关闭客户端连接时
@@ -122,6 +117,80 @@ SocketNet.prototype.start_server = function(obj, cb) {
                         socket_server.listen(info.serverport,function(){
                             logger.debug("listen on port: " + info.serverport + " ok!");
                         });
+                    } else {
+                        (function connectserver(){
+                            var client = net.connect(info.serverport,info.serverip, function(){
+                                var _connection = new Connection({"socket" : client});
+                                _connection.on('data',onReceivePackData);
+                                _connection.on('close',onCloseConnection);
+
+                                //当客户端收到完整的包时
+                                function onReceivePackData(buffer){
+                                    try {
+                                        var protocolFunc = ProtocolMan.getInstance().getProtocol(type);
+                                        if (!protocolFunc) {
+                                            logger.error("unrecognize proto type %d", type);
+                                        } else {
+                                            logger.warn("begin execute proto type %d", type);
+                                            var protocol = new protocolFunc();
+                                            protocol.execute(_connection, buffer);
+                                        }
+                                    } catch(err) {
+                                        logger.error("parse receive_data : " + err.stack);
+                                        var err_msg = {
+                                            "op" : client.op,
+                                            "ret" : 42
+                                        };
+                                        client.send(err_msg);
+                                        client.emit("c_close");
+                                    }
+                                }
+
+                                client.send=function(buffer){
+                                    if(client.writable) //{
+                                        client.write(buffer);
+                                    /*} else {
+                                        logger.error("socket write err,writable :" + client.writable);
+                                        client.emit("c_close");
+                                    }*/
+                                };
+
+                                //当数据异常关闭客户端连接时
+                                function onCloseConnection(buffer){
+                                    logger.error('数据异常关闭客户端连接!');
+                                    client.emit("c_close");
+                                }
+
+                                client.on("data",function(data){
+                                    _connection.onData(data);
+                                });
+
+                                client.on("error",function(e){
+                                    client.emit("c_close");
+                                    global.err("socket unknow err : " + e);
+                                });
+
+                                client.on("c_close",function(){
+                                    client.end();
+                                    client.destroy();
+                                });
+
+                                client.on("close",function(e){
+                                    if(info.handler["___close___"])
+                                        info.handler["___close___"].handle(client);
+                                    if(!client.destroyed) {
+                                        client.end();
+                                        client.destroy();
+                                    }
+                                    if(info.retry === 1) { // 断线重连
+                                        connectserver();
+                                    }
+                                });
+
+                                if(info.handler["___connect___"])
+                                    info.handler["___connect___"].handle(client);
+                                })
+                        })();
                     }
                 }
             })(key);
