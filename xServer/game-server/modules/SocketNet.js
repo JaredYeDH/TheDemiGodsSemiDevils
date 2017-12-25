@@ -143,7 +143,7 @@ SocketNet.prototype.start_server = function(obj, cb) {
                                     let protoMsg = protoNameSpace.ErrInfo.create(sndData);
                                     let __bytes = protoNameSpace.ErrInfo.encode(protoMsg).finish();
                                     _connection.sendMessage(protoMsg.msgid, __bytes);
-                                    sock.emit("c_close");
+                                    client.emit("c_close");
                                 }
 
                                 //当数据异常关闭客户端连接时
@@ -157,8 +157,8 @@ SocketNet.prototype.start_server = function(obj, cb) {
                                 });
 
                                 client.on("error",function(e){
+                                    logger.error("socket unknow err : " + e);
                                     client.emit("c_close");
-                                    global.err("socket unknow err : " + e);
                                 });
 
                                 client.on("c_close",function(){
