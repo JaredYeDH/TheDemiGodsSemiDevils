@@ -22,12 +22,7 @@ SocketNet.prototype.start_server = function(obj, cb) {
                             var d = domain.create();
                             d.on('error', function (err) {
                                 logger.error("catch domain exception:" + err.stack);
-                                var err_msg = {
-                                    "op" : sock.op,
-                                    "ret" : 42
-                                };
-                                sock.send(err_msg);
-                                sock.emit("c_close");
+                                netErr();
                             });
                             d.add(sock);
                             sock.c_ip= sock.remoteAddress;
@@ -50,22 +45,20 @@ SocketNet.prototype.start_server = function(obj, cb) {
                                     }
                                 } catch(err) {
                                     logger.error("parse receive_data : " + err.stack);
-                                    var err_msg = {
-                                        "op" : sock.op,
-                                        "ret" : 42
-                                    };
-                                    sock.send(err_msg);
-                                    sock.emit("c_close");
+                                    netErr();
                                 }
                             }
 
-                            sock.send=function(buffer){
-                                if(sock.writable) //{
-                                    sock.write(buffer);
-                                /*} else {
-                                    logger.error("socket write err,writable :" + sock.writable);
-                                    sock.emit("c_close");
-                                }*/
+                            function netErr(){
+                                let sndData = {
+                                    msgid : MsgProtobuf.getInstance().Messages('ErrProto').MsgID.ErrInfo_Notify,
+                                    errcode : 1
+                                }
+                                let protoNameSpace = MsgProtobuf.getInstance().Messages('ErrProto');
+                                let protoMsg = protoNameSpace.ErrInfo.create(sndData);
+                                let __bytes = protoNameSpace.ErrInfo.encode(protoMsg).finish();
+                                _connection.sendMessage(protoMsg.msgid, __bytes);
+                                sock.emit("c_close");
                             }
 
                             //当数据异常关闭客户端连接时
@@ -137,23 +130,21 @@ SocketNet.prototype.start_server = function(obj, cb) {
                                         }
                                     } catch(err) {
                                         logger.error("parse receive_data : " + err.stack);
-                                        var err_msg = {
-                                            "op" : client.op,
-                                            "ret" : 42
-                                        };
-                                        client.send(err_msg);
-                                        client.emit("c_close");
+                                        netErr();
                                     }
                                 }
 
-                                client.send=function(buffer){
-                                    if(client.writable) //{
-                                        client.write(buffer);
-                                    /*} else {
-                                        logger.error("socket write err,writable :" + client.writable);
-                                        client.emit("c_close");
-                                    }*/
-                                };
+                                function netErr(){
+                                    let sndData = {
+                                        msgid : MsgProtobuf.getInstance().Messages('ErrProto').MsgID.ErrInfo_Notify,
+                                        errcode : 1
+                                    }
+                                    let protoNameSpace = MsgProtobuf.getInstance().Messages('ErrProto');
+                                    let protoMsg = protoNameSpace.ErrInfo.create(sndData);
+                                    let __bytes = protoNameSpace.ErrInfo.encode(protoMsg).finish();
+                                    _connection.sendMessage(protoMsg.msgid, __bytes);
+                                    sock.emit("c_close");
+                                }
 
                                 //当数据异常关闭客户端连接时
                                 function onCloseConnection(buffer){

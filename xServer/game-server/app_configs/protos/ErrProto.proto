@@ -1,0 +1,12 @@
+package ErrProto;
+
+enum MsgID
+{
+	ErrInfo_Notify = 1;
+}
+
+message ErrInfo
+{
+	optional MsgID msgid = 1 [default = ErrInfo_Notify];
+	optional int32 errcode = 2;
+}
