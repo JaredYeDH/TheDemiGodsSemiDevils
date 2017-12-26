@@ -9,4 +9,5 @@ message ErrInfo
 {
 	optional MsgID msgid = 1 [default = ErrInfo_Notify];
 	optional int32 errcode = 2;
+	optional string errinfo = 3;
 }

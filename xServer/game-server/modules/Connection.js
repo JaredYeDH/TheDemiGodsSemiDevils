@@ -24,7 +24,8 @@ var Connection = function(options) {
     var msgDataLength = 0;
     this.onData = function(data) {
         msgDataLength += data.length;
-        logger.debug('receive msgDataLength:%d', msgDataLength);
+        //logger.debug('receive msgDataLength:%d', msgDataLength);
+        logger.debug('receive data length:%d', data.length);
         var packetLength = 0;
         while (data != null) {
             if (self.currentMessage == null) {

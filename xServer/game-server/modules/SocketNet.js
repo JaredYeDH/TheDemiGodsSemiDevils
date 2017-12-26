@@ -118,7 +118,7 @@ SocketNet.prototype.start_server = function(obj, cb) {
                                 _connection.on('close',onCloseConnection);
 
                                 //当客户端收到完整的包时
-                                function onReceivePackData(buffer){
+                                function onReceivePackData(type, buffer){
                                     try {
                                         var protocolFunc = ProtocolMan.getInstance().getProtocol(type);
                                         if (!protocolFunc) {

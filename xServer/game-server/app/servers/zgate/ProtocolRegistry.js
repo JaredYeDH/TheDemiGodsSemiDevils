@@ -5,11 +5,15 @@
 var MsgProtobuf = require('../../../modules/MsgProtobuf');
 var ProtocolMan = require('../../../modules/ProtocolMan');
 var CSAskLogin = require('./handlers/CSAskLogin');
+var CSErrProto = require('./handlers/CSErrProto');
 
 var ProtocolRegistry = {
     register: function() {
         let protoNameSpace = MsgProtobuf.getInstance().Messages('GCToLS');
         ProtocolMan.getInstance().register(protoNameSpace.MsgID.eMsgToLSFromGC_AskLogin, CSAskLogin);
+        
+        protoNameSpace = MsgProtobuf.getInstance().Messages('ErrProto');
+        ProtocolMan.getInstance().register(protoNameSpace.MsgID.ErrInfo_Notify, CSErrProto);
     }
 };
 
