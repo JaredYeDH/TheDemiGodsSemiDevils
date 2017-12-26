@@ -5,7 +5,7 @@ var CSErrProto = function () {
 }
 
 CSErrProto.prototype.execute = function (connection, buff) {
-    let protoNameSpace = MsgProtobuf.getInstance().Messages('ErrProto');
+    let protoNameSpace = MsgProtobuf.getInstance().Messages('SysProto');
 	var receive_data = protoNameSpace.ErrInfo.decode(buff);
     logger.debug("receive buff:"+ JSON.stringify(receive_data));
 

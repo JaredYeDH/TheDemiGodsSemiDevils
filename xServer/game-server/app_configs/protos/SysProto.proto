@@ -1,8 +1,9 @@
-package ErrProto;
+package SysProto;
 
 enum MsgID
 {
 	ErrInfo_Notify = 1;
+	SysProto_HeartBeat = 2;
 }
 
 message ErrInfo
@@ -10,4 +11,10 @@ message ErrInfo
 	optional MsgID msgid = 1 [default = ErrInfo_Notify];
 	optional int32 errcode = 2;
 	optional string errinfo = 3;
+}
+
+message HeartBeat
+{
+	optional MsgID msgid = 1 [default = SysProto_HeartBeat];
+	optional int32 time = 2;
 }
