@@ -5,6 +5,7 @@ var logger = require('pomelo-logger').getLogger('pomelo');
 var Connection = require('./Connection');
 var MsgProtobuf = require('./MsgProtobuf');
 var ProtocolMan = require('./ProtocolMan');
+var Random = require('../app/common/Random');
 
 var SocketNet = function() {};
 
@@ -195,8 +196,8 @@ SocketNet.prototype.start_server = function(obj, cb) {
                                     let protoNameSpace = MsgProtobuf.getInstance().Messages('SysProto');
                                     let sndData = {
                                         msgid : protoNameSpace.MsgID.SysProto_HeartBeat,
-                                        time : 1,
-                                        serverinfo : 'serverinfo'
+                                        time : Date.now(),
+                                        serverinfo : Random.genUniqKey()
                                     }
                                     let protoMsg = protoNameSpace.HeartBeat.create(sndData);
                                     let __bytes = protoNameSpace.HeartBeat.encode(protoMsg).finish();

@@ -32,6 +32,7 @@ var Connection = function(options) {
                 // here is the start of a new message
                 var _msgHeader = new MsgHeader().littleEndian();
                 if (data.length < _msgHeader.size()) {
+                    /*
                     if (self.lastLeftData == null) {
                         self.lastLeftData = new Buffer(data.length);
                         data.copy(self.lastLeftData, 0, 0);
@@ -42,6 +43,17 @@ var Connection = function(options) {
                         self.onClose();
                     }
                     return;
+                    */
+                    if (self.lastLeftData == null) {
+                        self.lastLeftData = new Buffer(data.length);
+                        data.copy(self.lastLeftData, 0, 0);
+                        logger.warn('Invalid header length of ' + data.length + ' wait for next receiving data......');
+                        return;
+                    } else if (self.lastLeftData.length+data.length < _msgHeader.size()) {
+                        logger.error('Invalid header length of ' + data.length + ' bytes. Needs to be at least big enough for the header');
+                        self.onClose();
+                        return;
+                    }
                 }
 
                 if (self.lastLeftData) {
@@ -164,6 +176,16 @@ Connection.prototype.sendMessage = function(command, buffer) {
     var self = this;
     if(self.socket.writable) {
         self.socket.write(_newbuffer);
+        /*
+        let _randval = Math.floor(Math.random()*_msgHeader.size())+8;
+        let _bufferSlice = _newbuffer.slice(0, _randval);
+        self.socket.write(_bufferSlice);
+        let _randval2 = _randval + Math.floor(Math.random()*(_newbuffer.length - _randval - Math.random()*32));
+        _bufferSlice = _newbuffer.slice(_randval, _randval2);
+        self.socket.write(_bufferSlice);
+        _bufferSlice = _newbuffer.slice(_randval2, _newbuffer.length);
+        self.socket.write(_bufferSlice);
+        */
     } else {
         logger.error("socket write err,writable :" + self.socket.writable + ', proto info:' + JSON.stringify(_msgHeader));
         self.onClose();
