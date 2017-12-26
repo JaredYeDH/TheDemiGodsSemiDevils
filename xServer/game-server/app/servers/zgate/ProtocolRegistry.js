@@ -12,7 +12,7 @@ var ProtocolRegistry = {
         let protoNameSpace = MsgProtobuf.getInstance().Messages('GCToLS');
         ProtocolMan.getInstance().register(protoNameSpace.MsgID.eMsgToLSFromGC_AskLogin, CSAskLogin);
         
-        protoNameSpace = MsgProtobuf.getInstance().Messages('ErrProto');
+        protoNameSpace = MsgProtobuf.getInstance().Messages('SysProto');
         ProtocolMan.getInstance().register(protoNameSpace.MsgID.ErrInfo_Notify, CSErrProto);
     }
 };

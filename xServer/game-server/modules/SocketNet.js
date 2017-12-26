@@ -50,11 +50,11 @@ SocketNet.prototype.start_server = function(obj, cb) {
                             }
 
                             function netErr(){
+                                let protoNameSpace = MsgProtobuf.getInstance().Messages('SysProto');
                                 let sndData = {
-                                    msgid : MsgProtobuf.getInstance().Messages('ErrProto').MsgID.ErrInfo_Notify,
+                                    msgid : protoNameSpace.MsgID.ErrInfo_Notify,
                                     errcode : 1
                                 }
-                                let protoNameSpace = MsgProtobuf.getInstance().Messages('ErrProto');
                                 let protoMsg = protoNameSpace.ErrInfo.create(sndData);
                                 let __bytes = protoNameSpace.ErrInfo.encode(protoMsg).finish();
                                 _connection.sendMessage(protoMsg.msgid, __bytes);
@@ -135,11 +135,11 @@ SocketNet.prototype.start_server = function(obj, cb) {
                                 }
 
                                 function netErr(){
+                                    let protoNameSpace = MsgProtobuf.getInstance().Messages('SysProto');
                                     let sndData = {
-                                        msgid : MsgProtobuf.getInstance().Messages('ErrProto').MsgID.ErrInfo_Notify,
+                                        msgid : protoNameSpace.MsgID.ErrInfo_Notify,
                                         errcode : 1
                                     }
-                                    let protoNameSpace = MsgProtobuf.getInstance().Messages('ErrProto');
                                     let protoMsg = protoNameSpace.ErrInfo.create(sndData);
                                     let __bytes = protoNameSpace.ErrInfo.encode(protoMsg).finish();
                                     _connection.sendMessage(protoMsg.msgid, __bytes);
