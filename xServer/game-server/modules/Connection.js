@@ -160,9 +160,8 @@ Connection.prototype.sendMessage = function(command, buffer) {
     _newbuffer.fill(buffer, _msgHeader.size())
 
     var self = this;
-    self.socket.write(_newbuffer);
     if(self.socket.writable) {
-        self.socket.write(buffer);
+        self.socket.write(_newbuffer);
     } else {
         logger.error("socket write err,writable :" + self.socket.writable + ' proto info:' + JSON.stringify(_msgHeader));
         self.onClose();
