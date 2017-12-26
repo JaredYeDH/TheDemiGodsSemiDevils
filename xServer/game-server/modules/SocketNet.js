@@ -40,7 +40,7 @@ SocketNet.prototype.start_server = function(obj, cb) {
                                     if (!protocolFunc) {
                                         logger.error("unrecognize proto type %d", type);
                                     } else {
-                                        logger.warn("begin execute proto type %d", type);
+                                        logger.debug("begin execute proto type %d", type);
                                         var protocol = new protocolFunc();
                                         protocol.execute(_connection, buffer);
                                     }
@@ -128,7 +128,7 @@ SocketNet.prototype.start_server = function(obj, cb) {
                                         if (!protocolFunc) {
                                             logger.error("unrecognize proto type %d", type);
                                         } else {
-                                            logger.warn("begin execute proto type %d", type);
+                                            logger.debug("begin execute proto type %d", type);
                                             var protocol = new protocolFunc();
                                             protocol.execute(_connection, buffer);
                                         }
