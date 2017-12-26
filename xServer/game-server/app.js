@@ -61,7 +61,7 @@ app.configure('production|development', 'zgate', function(){
 	    	"serverport" : 49996, 
 			"is_server" : 0,
 			"handler"  : handler,
-	        "retry"   : 1
+	        "retry"   : true
 	    }
 	};
 
