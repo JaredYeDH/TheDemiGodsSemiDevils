@@ -38,7 +38,7 @@ var Connection = function(options) {
                         data.copy(self.lastLeftData, 0, 0);
                         logger.warn('Invalid header length of ' + data.length + ' wait for next receiving data......');
                     } else {
-                        // recevi data less than msg header size more than twice, disconnt it ...
+                        // receive data less than msg header size more than twice, disconnt it ...
                         logger.error('Invalid header length of ' + data.length + ' bytes. Needs to be at least big enough for the header');
                         self.onClose();
                     }
@@ -50,7 +50,8 @@ var Connection = function(options) {
                         logger.warn('Invalid header length of ' + data.length + ' wait for next receiving data......');
                         return;
                     } else if (self.lastLeftData.length+data.length < _msgHeader.size()) {
-                        logger.error('Invalid header length of ' + data.length + ' bytes. Needs to be at least big enough for the header');
+                        // receive data less than msg header size more than twice, disconnt it ...
+                        logger.error('Invalid header length twice of ' + (self.lastLeftData.length+data.length) + ' bytes. Needs to be at least big enough for the header');
                         self.onClose();
                         return;
                     }
