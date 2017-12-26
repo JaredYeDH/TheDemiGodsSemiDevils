@@ -6,6 +6,7 @@ var MsgProtobuf = require('../../../modules/MsgProtobuf');
 var ProtocolMan = require('../../../modules/ProtocolMan');
 var CSAskLogin = require('./handlers/CSAskLogin');
 var CSErrProto = require('./handlers/CSErrProto');
+var CSHeartBeat = require('./handlers/CSHeartBeat');
 
 var ProtocolRegistry = {
     register: function() {
@@ -14,6 +15,7 @@ var ProtocolRegistry = {
         
         protoNameSpace = MsgProtobuf.getInstance().Messages('SysProto');
         ProtocolMan.getInstance().register(protoNameSpace.MsgID.ErrInfo_Notify, CSErrProto);
+        ProtocolMan.getInstance().register(protoNameSpace.MsgID.SysProto_HeartBeat, CSHeartBeat);
     }
 };
 

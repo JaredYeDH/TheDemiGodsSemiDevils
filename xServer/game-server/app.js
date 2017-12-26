@@ -57,7 +57,7 @@ app.configure('production|development', 'zgate', function(){
 	};
 	var _obj = {
 		"clientcfg" : {
-			"serverip" : "2001:0:d362:47c3:38a8:36e2:3f57:e19b",
+			"serverip" : "192.168.30.100",
 	    	"serverport" : 49996, 
 			"is_server" : 0,
 			"handler"  : handler,

@@ -17,4 +17,5 @@ message HeartBeat
 {
 	optional MsgID msgid = 1 [default = SysProto_HeartBeat];
 	optional int32 time = 2;
+	optional string serverinfo = 3;
 }

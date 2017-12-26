@@ -11,6 +11,7 @@ var SocketNet = function() {};
 SocketNet.prototype.start_server = function(obj, cb) {
     var self = this;
     var socket_server;
+    var socketClient;
 
     if(obj) {
         for(var key in obj) {
@@ -95,8 +96,8 @@ SocketNet.prototype.start_server = function(obj, cb) {
                             if(info.handler["___connect___"])
                                 info.handler["___connect___"].handle(sock);
 
-                            //客户端默认是30秒发一次心跳
-                            sock.setTimeout(1*30*1000);
+                            //超过60s未发心跳包 断开连接
+                            sock.setTimeout(1*60*1000);
                             sock.addListener("timeout",function(){
                                 logger.debug("socket timeout, ip:"+sock.c_ip+",port:"+sock.c_port);
                                 sock.emit("c_close");
@@ -111,11 +112,14 @@ SocketNet.prototype.start_server = function(obj, cb) {
                             logger.debug("listen on port: " + info.serverport + " ok!");
                         });
                     } else {
-                        (function connectserver(){
-                            var client = net.connect(info.serverport,info.serverip, function(){
-                                var _connection = new Connection({"socket" : client});
+                        function connectserver(){
+                            socketClient = net.connect(info.serverport,info.serverip, function(){
+                                var _connection = new Connection({"socket" : socketClient});
                                 _connection.on('data',onReceivePackData);
                                 _connection.on('close',onCloseConnection);
+                                socketClient.connection = _connection;
+                                socketClient.connectStatus = true;
+                                socketClient.lastHeartBeatTime = 0;
 
                                 //当客户端收到完整的包时
                                 function onReceivePackData(type, buffer){
@@ -143,45 +147,64 @@ SocketNet.prototype.start_server = function(obj, cb) {
                                     let protoMsg = protoNameSpace.ErrInfo.create(sndData);
                                     let __bytes = protoNameSpace.ErrInfo.encode(protoMsg).finish();
                                     _connection.sendMessage(protoMsg.msgid, __bytes);
-                                    client.emit("c_close");
+                                    socketClient.emit("c_close");
                                 }
 
                                 //当数据异常关闭客户端连接时
                                 function onCloseConnection(buffer){
                                     logger.error('数据异常关闭客户端连接!');
-                                    client.emit("c_close");
+                                    socketClient.emit("c_close");
                                 }
 
-                                client.on("data",function(data){
+                                socketClient.on("data",function(data){
                                     _connection.onData(data);
                                 });
 
-                                client.on("error",function(e){
+                                socketClient.on("error",function(e){
                                     logger.error("socket unknow err : " + e);
-                                    client.emit("c_close");
+                                    socketClient.emit("c_close");
                                 });
 
-                                client.on("c_close",function(){
-                                    client.end();
-                                    client.destroy();
+                                socketClient.on("c_close",function(){
+                                    socketClient.end();
+                                    socketClient.destroy();
+                                    socketClient.connectStatus = false;
                                 });
 
-                                client.on("close",function(e){
+                                socketClient.on("close",function(e){
                                     if(info.handler["___close___"])
-                                        info.handler["___close___"].handle(client);
-                                    if(!client.destroyed) {
-                                        client.end();
-                                        client.destroy();
+                                        info.handler["___close___"].handle(socketClient);
+                                    if(!socketClient.destroyed) {
+                                        socketClient.end();
+                                        socketClient.destroy();
                                     }
-                                    if(info.retry === 1) { // 断线重连
-                                        connectserver();
-                                    }
+                                    socketClient.connectStatus = false;
                                 });
 
                                 if(info.handler["___connect___"])
-                                    info.handler["___connect___"].handle(client);
-                                })
-                        })();
+                                    info.handler["___connect___"].handle(socketClient);
+                            })
+                        }
+                        connectserver();
+                        setInterval( function() {
+                            if(info.retry && !Boolean(socketClient.connectStatus)) {
+                                connectserver();
+                            } else if (socketClient.connectStatus) {
+                                let _now = new Date().getTime()
+                                if (_now - socketClient.lastHeartBeatTime > 30*1000) {
+                                    let protoNameSpace = MsgProtobuf.getInstance().Messages('SysProto');
+                                    let sndData = {
+                                        msgid : protoNameSpace.MsgID.SysProto_HeartBeat,
+                                        time : 1,
+                                        serverinfo : 'serverinfo'
+                                    }
+                                    let protoMsg = protoNameSpace.HeartBeat.create(sndData);
+                                    let __bytes = protoNameSpace.HeartBeat.encode(protoMsg).finish();
+                                    socketClient.connection.sendMessage(protoMsg.msgid, __bytes);
+                                    socketClient.lastHeartBeatTime = _now;
+                                }
+                            }
+                        },3*1000); // 每3s检测一次 30s发一次心跳包
                     }
                 }
             })(key);

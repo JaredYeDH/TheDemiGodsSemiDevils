@@ -148,7 +148,8 @@ Connection.createGuid = function() {
 /***
  * Sends a ping to the server and expects a pong response
  */
-Connection.prototype.sendPing = function() {
+Connection.prototype.sendHeartBeat = function() {
+
 };
 
 Connection.prototype.sendMessage = function(command, buffer) {
@@ -164,7 +165,7 @@ Connection.prototype.sendMessage = function(command, buffer) {
     if(self.socket.writable) {
         self.socket.write(_newbuffer);
     } else {
-        logger.error("socket write err,writable :" + self.socket.writable + ' proto info:' + JSON.stringify(_msgHeader));
+        logger.error("socket write err,writable :" + self.socket.writable + ', proto info:' + JSON.stringify(_msgHeader));
         self.onClose();
     }
 };
