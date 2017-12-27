@@ -24,18 +24,18 @@ MsgHeader.prototype.peek = function(buf) {
     //this._size = buf.readUInt32LE(0);
     //this._type = buf.readUInt32LE(4);
     let varLen = 4;
-    let readOffset = 0;
-    this._size = buf['readUInt' + (8*varLen) + ''+ this._endian +'E'](readOffset); readOffset += varLen;
-    this._type = buf['readUInt' + (8*varLen) + ''+ this._endian +'E'](readOffset); readOffset += varLen;
+    let offset = 0;
+    this._size = buf['readUInt' + (8*varLen) + ''+ this._endian +'E'](offset); offset += varLen;
+    this._type = buf['readUInt' + (8*varLen) + ''+ this._endian +'E'](offset); offset += varLen;
 };
 
 MsgHeader.prototype.fill = function(buf) {
     //buf.writeUInt32(this._size, 0);
     //buf.writeUInt32(this._type, 4);
     let varLen = 4;
-    let readOffset = 0;
-    buf['writeUInt' + (8*varLen) + ''+ this._endian +'E'](this._size, readOffset); readOffset += varLen;
-    buf['writeUInt' + (8*varLen) + ''+ this._endian +'E'](this._type, readOffset); readOffset += varLen;
+    let offset = 0;
+    buf['writeUInt' + (8*varLen) + ''+ this._endian +'E'](this._size, offset); offset += varLen;
+    buf['writeUInt' + (8*varLen) + ''+ this._endian +'E'](this._type, offset); offset += varLen;
 };
 
 MsgHeader.prototype.size = function() {

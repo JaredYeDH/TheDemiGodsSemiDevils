@@ -3,17 +3,13 @@ var events = require('events');
 var uuid = require('node-uuid');
 var logger = require('pomelo-logger').getLogger('pomelo');
 var MsgHeader = require('./MsgHeader');
-
-var MAX_MSG_LENGTH = 16*1024;
+var NetBuffer = require('./NetBuffer');
 
 var Connection = function(options) {
     var self = this;
-    this.currentOffset = 0;
-    this.currentLength = 0;
-    this.currentMessage = null;
-    this.lastLeftData = null;
-
     this.socket = options.socket;
+    this.netbuffer = new NetBuffer();
+
     this.on('error', options.onError || onError);
 
     /***
@@ -23,101 +19,19 @@ var Connection = function(options) {
      */
     var msgDataLength = 0;
     this.onData = function(data) {
-        msgDataLength += data.length;
-        //logger.debug('receive msgDataLength:%d', msgDataLength);
-        logger.debug('receive data length:%d', data.length);
-        var packetLength = 0;
-        while (data != null) {
-            if (self.currentMessage == null) {
-                // here is the start of a new message
-                var _msgHeader = new MsgHeader().littleEndian();
-                if (data.length < _msgHeader.size()) {
-                    /*
-                    if (self.lastLeftData == null) {
-                        self.lastLeftData = new Buffer(data.length);
-                        data.copy(self.lastLeftData, 0, 0);
-                        logger.warn('Invalid header length of ' + data.length + ' wait for next receiving data......');
-                    } else {
-                        // receive data less than msg header size more than twice, disconnt it ...
-                        logger.error('Invalid header length of ' + data.length + ' bytes. Needs to be at least big enough for the header');
-                        self.onClose();
-                    }
-                    return;
-                    */
-                    if (self.lastLeftData == null) {
-                        self.lastLeftData = new Buffer(data.length);
-                        data.copy(self.lastLeftData, 0, 0);
-                        logger.warn('Invalid header length of ' + data.length + ' wait for next receiving data......');
-                        return;
-                    } else if (self.lastLeftData.length+data.length < _msgHeader.size()) {
-                        // receive data less than msg header size more than twice, disconnt it ...
-                        logger.error('Invalid header length twice of ' + (self.lastLeftData.length+data.length) + ' bytes. Needs to be at least big enough for the header');
-                        self.onClose();
-                        return;
-                    }
-                }
-
-                if (self.lastLeftData) {
-                    var _newbuffer = new Buffer(self.lastLeftData.length + data.length);
-                    self.lastLeftData.copy(_newbuffer, 0, 0);
-                    data.copy(_newbuffer, self.lastLeftData.length, 0);
-                    data = _newbuffer;
-                    self.lastLeftData = null;
-                }
-
-                _msgHeader.peek(data);
-                if (_msgHeader._size > MAX_MSG_LENGTH) {
-                    logger.error('Invalid message length msgtype:%d, msgsize:%d', _msgHeader._type, _msgHeader._size);
-                    self.onClose();
-                    return;
-                }
-                logger.debug('receive msg header:%s', JSON.stringify(_msgHeader));
-
-                // The entire message will include the command length at the start
-                var messageLength = _msgHeader._size;
-                if (data.length == messageLength) {
-                    // A single packet message, no need to copy into another buffer
-                    receiveMessage(data);
-                    data = null;
-                } else if (data.length > messageLength) {
-                    // Multiple messages in one packet
-                    var firstMessage = data.slice(0, messageLength);
-                    self.currentLength = messageLength;
-                    receiveMessage(firstMessage);
-                    data = data.slice(self.currentLength);
-                } else {
-                    // The first packet of a multi-packet message
-                    self.currentMessage = new Buffer(messageLength);
-                    packetLength = data.copy(self.currentMessage, self.currentOffset, 0);
-                    self.currentOffset = packetLength;
-                    data = null;
-                }
-            } else {
-                var _msgHeader = new MsgHeader().littleEndian();
-                _msgHeader.peek(self.currentMessage);
-                var messageLength = _msgHeader._size;
-                do {
-                    if (data.length+self.currentOffset == messageLength) {
-                        packetLength = data.copy(self.currentMessage, self.currentOffset, 0, messageLength-self.currentOffset);
-                        self.currentOffset += packetLength;
-                        receiveMessage(self.currentMessage);
-                        data = null;
-                    } else if (data.length+self.currentOffset > messageLength) {
-                        packetLength = data.copy(self.currentMessage, self.currentOffset, 0, messageLength-self.currentOffset);
-                        self.currentOffset += packetLength;
-                        receiveMessage(self.currentMessage);
-                        data = data.slice(packetLength);
-                    } else {
-                        packetLength = data.copy(self.currentMessage, self.currentOffset, 0);
-                        self.currentOffset += packetLength;
-                        data = null;
-                        break;
-                    }
-                    self.currentMessage = null;
-                    self.currentOffset = 0;
-                } while(0);
+        self.netbuffer.push(data);
+        do {
+            var msg = self.netbuffer.pop();
+            if (!msg.datast) {
+                logger.error('Invalid message length msgtype:%d, msgsize:%d', msg.header._type, msg.header._size);
+                self.onClose();
+                break;
             }
-        }
+            if (msg.data == null)
+                break;
+            logger.debug('length msgtype:%d, msgsize:%d', msg.header._type, msg.header._size);
+            receiveMessage(msg.data);
+        } while(1);
     }
 
     /***
@@ -176,8 +90,8 @@ Connection.prototype.sendMessage = function(command, buffer) {
 
     var self = this;
     if(self.socket.writable) {
-        self.socket.write(_newbuffer);
-        /*
+        //self.socket.write(_newbuffer);
+        
         let ___newbuffer = new Buffer(_newbuffer.length*2);
         _newbuffer.copy(___newbuffer, 0, 0, _newbuffer.length);
         _newbuffer.copy(___newbuffer, _newbuffer.length, 0, _newbuffer.length);
@@ -190,7 +104,7 @@ Connection.prototype.sendMessage = function(command, buffer) {
         self.socket.write(_bufferSlice);
         _bufferSlice = _newbuffer.slice(_randval2, _newbuffer.length);
         self.socket.write(_bufferSlice);
-        */
+        
     } else {
         logger.error("socket write err,writable :" + self.socket.writable + ', proto info:' + JSON.stringify(_msgHeader));
         self.onClose();
