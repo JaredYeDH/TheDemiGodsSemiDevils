@@ -91,7 +91,6 @@ var NetBuffer = function (bufferLength) {
         let databuff = null;
         let msgheader = new MsgHeader().littleEndian();
         do {
-            let msgheader = new MsgHeader().littleEndian();
             let _headLen = msgheader.size();
             if(getLen() < _headLen)
                 break;
@@ -122,7 +121,7 @@ var NetBuffer = function (bufferLength) {
             
             databuff = new Buffer(msgheader._size);
             if (!databuff) {
-                //logger.error('new Buffer failed. need size:' + msgheader._size);
+                //logger.error('malloc Buffer failed. need size:' + msgheader._size);
                 break;
             }
             msgheader.fill(databuff);
