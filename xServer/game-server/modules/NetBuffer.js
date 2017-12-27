@@ -9,7 +9,7 @@ var MAX_MSG_LENGTH = 16*1024;
  */
 var NetBuffer = function (bufferLength) {
 	var self = this;
-    var _buffer = new Buffer(bufferLength || 1024*16); //nodejs中Buffer大于8kb 会使用slowBuffer，效率低
+    var _buffer = new Buffer(bufferLength || MAX_MSG_LENGTH);
     var _putOffset = 0;  //存放数据起始位置
     var _readOffset = 0;   //读取缓存区时的起始位置
 
