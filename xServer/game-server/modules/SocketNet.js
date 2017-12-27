@@ -191,7 +191,7 @@ SocketNet.prototype.start_server = function(obj, cb) {
                             if(info.retry && !Boolean(socketClient.connectStatus)) {
                                 connectserver();
                             } else if (socketClient.connectStatus) {
-                                let _now = new Date().getTime()
+                                let _now = Date.now();
                                 if (_now - socketClient.lastHeartBeatTime > 30*1000) {
                                     let protoNameSpace = MsgProtobuf.getInstance().Messages('SysProto');
                                     let sndData = {
