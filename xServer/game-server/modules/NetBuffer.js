@@ -1,7 +1,5 @@
 var logger = require('pomelo-logger').getLogger('pomelo');
-var MsgHeader = require('./MsgHeader');
-
-var MAX_MSG_LENGTH = 16*1024;
+var GlobalProto = require('./GlobalProto');
 
 /*
  * 构造方法
@@ -9,7 +7,7 @@ var MAX_MSG_LENGTH = 16*1024;
  */
 var NetBuffer = function (bufferLength) {
 	var self = this;
-    var _buffer = new Buffer(bufferLength || MAX_MSG_LENGTH);
+    var _buffer = new Buffer(bufferLength || GlobalProto.Instance().maxMsgLength());
     var _putOffset = 0;  //存放数据起始位置
     var _readOffset = 0;   //读取缓存区时的起始位置
 
@@ -65,7 +63,7 @@ var NetBuffer = function (bufferLength) {
     this.peek = function() {
         let canBeRead = false;
         do {
-            let msgheader = new MsgHeader().littleEndian();
+            let msgheader = GlobalProto.Instance().msgHeader();
             let _headLen = msgheader.size();
             if(getLen() < _headLen) //连包头都读不了
                 break;
@@ -89,7 +87,7 @@ var NetBuffer = function (bufferLength) {
     this.pop = function() {
         let datastatus = true; // true:正常 false:消息大小超出最大范围
         let databuff = null;
-        let msgheader = new MsgHeader().littleEndian();
+        let msgheader = GlobalProto.Instance().msgHeader();
         do {
             let _headLen = msgheader.size();
             if(getLen() < _headLen)
@@ -114,33 +112,29 @@ var NetBuffer = function (bufferLength) {
                 //logger.error('222222 peek msgheader:' + JSON.stringify(msgheader) + ' _readOffset:' + _readOffset);
             }
 
-            if (msgheader._size > MAX_MSG_LENGTH) { // 消息大小超出最大范围
+            if (msgheader._size > GlobalProto.Instance().maxMsgLength()) { // 消息大小超出最大范围
                 datastatus = false;
                 break;
             }
             
-            databuff = new Buffer(msgheader._size);
-            if (!databuff) {
-                //logger.error('malloc Buffer failed. need size:' + msgheader._size);
-                break;
-            }
-            msgheader.fill(databuff);
+            databuff = GlobalProto.Instance().dataBuffer();
+            //msgheader.fill(databuff);
             // 读取包头外的剩余数据
             let leftlen = msgheader._size - msgheader.size();
             if(_buffer.length - _readOffset >=  leftlen) {
-                _buffer.copy(databuff, msgheader.size(), _readOffset, _readOffset += leftlen);
+                _buffer.copy(databuff, 0, _readOffset, _readOffset += leftlen);
                 if (_readOffset == _buffer.length)
                     _readOffset = 0;
             } else {
                 var len1 = _buffer.length - _readOffset;
                 if (len1 > 0)
-                    _buffer.copy(databuff, msgheader.size(), _readOffset, _buffer.length);
+                    _buffer.copy(databuff, 0, _readOffset, _buffer.length);
                 var len2 = leftlen - len1;
-                _buffer.copy(databuff, msgheader.size()+len1, 0, len2);
+                _buffer.copy(databuff, len1, 0, len2);
                 _readOffset = len2;
             }
         } while(0);
-        return {data: databuff, datast: datastatus, header: msgheader};
+        return {datast: datastatus, header: msgheader, data: databuff};
     }
     
     //获取缓冲区已占用空间长度

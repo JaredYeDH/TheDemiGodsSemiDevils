@@ -5,10 +5,10 @@ var Random = require('../../../common/Random');
 var CSHeartBeat = function () {
 }
 
-CSHeartBeat.prototype.execute = function (connection, buff) {
+CSHeartBeat.prototype.execute = function (connection, msgheader, buff) {
     let protoNameSpace = MsgProtobuf.getInstance().Messages('SysProto');
 	var receive_data = protoNameSpace.HeartBeat.decode(buff);
-    logger.debug("receive buff:"+ JSON.stringify(receive_data));
+    logger.debug("receive data:"+ JSON.stringify(receive_data));
 	let sndData = {
     	msgid : protoNameSpace.MsgID.SysProto_HeartBeat,
     	time : Date.now(),

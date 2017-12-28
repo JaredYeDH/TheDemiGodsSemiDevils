@@ -4,10 +4,10 @@ var MsgProtobuf = require('../../../../modules/MsgProtobuf');
 var CSErrProto = function () {
 }
 
-CSErrProto.prototype.execute = function (connection, buff) {
+CSErrProto.prototype.execute = function (connection, msgheader, buff) {
     let protoNameSpace = MsgProtobuf.getInstance().Messages('SysProto');
 	var receive_data = protoNameSpace.ErrInfo.decode(buff);
-    logger.debug("receive buff:"+ JSON.stringify(receive_data));
+    logger.debug("receive data:"+ JSON.stringify(receive_data));
     /*
 	let sndData = {
     	msgid : protoNameSpace.MsgID.ErrInfo_Notify,

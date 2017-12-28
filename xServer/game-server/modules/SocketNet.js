@@ -35,15 +35,15 @@ SocketNet.prototype.start_server = function(obj, cb) {
                             _connection.on('close',onCloseConnection);
 
                             //当服务端收到完整的包时
-                            function onReceivePackData(type, buffer) {
+                            function onReceivePackData(msgheader, buffer) {
                                 try {
-                                    var protocolFunc = ProtocolMan.getInstance().getProtocol(type);
+                                    var protocolFunc = ProtocolMan.getInstance().getProtocol(msgheader._type);
                                     if (!protocolFunc) {
-                                        logger.error("unrecognize proto type %d", type);
+                                        logger.error("unrecognize proto _type %d", msgheader._type);
                                     } else {
-                                        logger.debug("begin execute proto type %d", type);
+                                        logger.debug("begin execute proto _type %d", msgheader._type);
                                         var protocol = new protocolFunc();
-                                        protocol.execute(_connection, buffer);
+                                        protocol.execute(_connection, msgheader, buffer);
                                     }
                                 } catch(err) {
                                     logger.error("parse receive_data : " + err.stack);
@@ -123,15 +123,15 @@ SocketNet.prototype.start_server = function(obj, cb) {
                                 socketClient.lastHeartBeatTime = 0;
 
                                 //当客户端收到完整的包时
-                                function onReceivePackData(type, buffer){
+                                function onReceivePackData(msgheader, buffer){
                                     try {
-                                        var protocolFunc = ProtocolMan.getInstance().getProtocol(type);
+                                        var protocolFunc = ProtocolMan.getInstance().getProtocol(msgheader._type);
                                         if (!protocolFunc) {
-                                            logger.error("unrecognize proto type %d", type);
+                                            logger.error("unrecognize proto _type %d", msgheader._type);
                                         } else {
-                                            logger.debug("begin execute proto type %d", type);
+                                            logger.debug("begin execute proto _type %d", msgheader._type);
                                             var protocol = new protocolFunc();
-                                            protocol.execute(_connection, buffer);
+                                            protocol.execute(_connection, msgheader, buffer);
                                         }
                                     } catch(err) {
                                         logger.error("parse receive_data : " + err.stack);

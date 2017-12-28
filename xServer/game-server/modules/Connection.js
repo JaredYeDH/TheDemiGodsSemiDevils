@@ -27,10 +27,12 @@ var Connection = function(options) {
                 self.onClose();
                 break;
             }
-            if (msg.data == null)
+            if (!Boolean(msg.data)) {
+                logger.warn('Invalid message length wait for next received. msgtype:%d, msgsize:%d', msg.header._type, msg.header._size);
                 break;
-            logger.debug('length msgtype:%d, msgsize:%d', msg.header._type, msg.header._size);
-            receiveMessage(msg.data);
+            }
+            logger.debug('receive message : ' + JSON.stringify(msg.header));
+            receiveMessage(msg.header, msg.data.slice(0, msg.header._size-msg.header.size()));
         } while(1);
     }
 
@@ -54,10 +56,8 @@ var Connection = function(options) {
      * Called when a complete message has arrived from the EventStore.
      * @param buf A Buffer containing a complete message
      */
-    function receiveMessage(buf) {
-        var _msgHeader = new MsgHeader().littleEndian();
-        _msgHeader.peek(buf);
-        self.emit("data", _msgHeader._type, buf.slice(_msgHeader.size()));
+    function receiveMessage(msgheader, buf) {
+        self.emit("data", msgheader, buf);
     }
 }
 

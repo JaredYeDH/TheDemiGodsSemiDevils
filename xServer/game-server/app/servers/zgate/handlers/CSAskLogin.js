@@ -4,9 +4,9 @@ var MsgProtobuf = require('../../../../modules/MsgProtobuf');
 var CSAskLogin = function () {
 }
 
-CSAskLogin.prototype.execute = function (connection, buff) {
+CSAskLogin.prototype.execute = function (connection, msgheader, buff) {
 	var receive_data = MsgProtobuf.getInstance().Messages('GCToLS').AskLogin.decode(buff);
-    logger.debug("receive buff:"+ JSON.stringify(receive_data));
+    logger.debug("receive data:"+ JSON.stringify(receive_data));
 
     let protoNameSpace = MsgProtobuf.getInstance().Messages('LSToGC');
 	let sndData = {
