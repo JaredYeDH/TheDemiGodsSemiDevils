@@ -18,8 +18,9 @@ app.configure('production|development', 'connector', function(){
     });
 });
 
-function on_user_socket_connect()
+function on_user_socket_connect(app)
 {
+	this._app = app;
 	this.handle = function(s)
 	{
         logger.warn("on_user_socket_connect,ip:"+s.c_ip+",port:"+ s.c_port);
@@ -28,11 +29,16 @@ function on_user_socket_connect()
 	    s.interval = setInterval(function(){
 	        help_user_tick(s);
 	    },3*1000);*/
+	    let playerid = 15;
+	    this._app.rpc.logic.logicRemote.testRpcOpr(playerid, 1, this._app.get('serverId'), 15, 15, function(res) {
+			logger.error('-------------------------------' + res);
+		});
 	}
 }
 
-function on_user_socket_close()
+function on_user_socket_close(app)
 {
+	this._app = app;
 	this.handle = function(s)
 	{
         logger.warn("on_user_socket_close ,ip:"+s.c_ip+",port:"+ s.c_port);
@@ -40,8 +46,8 @@ function on_user_socket_close()
 }
 
 var handler = {
-	"___connect___" : new on_user_socket_connect(),
-	"___close___"  : new on_user_socket_close(),
+	"___connect___" : new on_user_socket_connect(app),
+	"___close___"  : new on_user_socket_close(app),
 };
 
 app.configure('production|development', 'zgate', function(){
@@ -57,7 +63,7 @@ app.configure('production|development', 'zgate', function(){
 	};
 	var _obj = {
 		"clientcfg" : {
-			"serverip" : "192.168.30.100",
+			"serverip" : "192.168.1.106",
 	    	"serverport" : 49996, 
 			"is_server" : 0,
 			"handler"  : handler,
@@ -74,6 +80,23 @@ app.configure('production|development', 'zgate', function(){
 			}
 		);
 	}
+});
+
+app.configure('production|development', 'master|connector|zgate|logic', function () {
+    var env = app.get('env');
+    logger.info("env is " + env);
+});
+
+var logicRoute = function(playerid, msg, app, cb) {
+    var logicServers = app.getServersByType('logic');
+    if (!logicServers || logicServers.length === 0) {
+        throw new Error("0 logic servers to route");
+    }
+    var index = playerid % logicServers.length;
+    cb(null, logicServers[index].id);
+};
+app.configure('production|development', function() {
+    app.route('logic', logicRoute);
 });
 
 // start app
