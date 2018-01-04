@@ -42,11 +42,11 @@ SocketNet.prototype.start_server = function(obj, cb) {
                                         logger.error("unrecognize proto _type %d", msgheader._type);
                                     } else {
                                         logger.debug("begin execute proto _type %d", msgheader._type);
-                                        var protocol = new protocolFunc();
-                                        protocol.execute(_connection, msgheader, buffer);
+                                        //var protocol = new protocolFunc();
+                                        protocolFunc.execute(_connection, msgheader, buffer);
                                     }
                                 } catch(err) {
-                                    logger.error("parse receive_data : " + err.stack);
+                                    logger.error("handle msg failed, err stack : " + err.stack);
                                     netErr();
                                 }
                             }
@@ -130,11 +130,11 @@ SocketNet.prototype.start_server = function(obj, cb) {
                                             logger.error("unrecognize proto _type %d", msgheader._type);
                                         } else {
                                             logger.debug("begin execute proto _type %d", msgheader._type);
-                                            var protocol = new protocolFunc();
-                                            protocol.execute(_connection, msgheader, buffer);
+                                            //var protocol = new protocolFunc();
+                                            protocolFunc.execute(_connection, msgheader, buffer);
                                         }
                                     } catch(err) {
-                                        logger.error("parse receive_data : " + err.stack);
+                                        logger.error("handle msg failed, err stack : " + err.stack);
                                         netErr();
                                     }
                                 }

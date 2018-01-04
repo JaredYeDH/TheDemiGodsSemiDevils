@@ -96,7 +96,7 @@ Connection.prototype.sendMessage = function(command, buffer) {
         _newbuffer.copy(___newbuffer, 0, 0, _newbuffer.length);
         _newbuffer.copy(___newbuffer, _newbuffer.length, 0, _newbuffer.length);
         _newbuffer = ___newbuffer;
-        let _randval = Math.floor(Math.random()*_msgHeader.size())+8;
+        let _randval = Math.floor(Math.random()*_msgHeader.size());
         let _bufferSlice = _newbuffer.slice(0, _randval);
         self.socket.write(_bufferSlice);
         let _randval2 = _randval + Math.floor(Math.random()*(_newbuffer.length - _randval - Math.random()*32));
