@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "private": false,
   "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "extend": "^3.0.1",
     "glob": "^7.1.2",
     "pomelo": "2.2.5",
     "protobufjs": "^6.8.3",

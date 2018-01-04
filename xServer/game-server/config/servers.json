@@ -16,6 +16,13 @@
         "host": "127.0.0.1",
         "port": 6001
       }
+    ],
+    "social": [
+      {
+        "id": "social-server-1",
+        "host": "127.0.0.1",
+        "port": 7001
+      }
     ]
   },
   "production":{
@@ -34,6 +41,13 @@
         "id": "logic-server-1",
         "host": "127.0.0.1",
         "port": 6001
+      }
+    ],
+    "social": [
+      {
+        "id": "social-server-1",
+        "host": "127.0.0.1",
+        "port": 7001
       }
     ]
   }

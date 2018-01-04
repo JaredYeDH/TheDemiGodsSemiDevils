@@ -1,5 +1,8 @@
 var pomelo = require('pomelo');
 var logger = require('pomelo-logger').getLogger('pomelo');
+var express = require("express");
+var bodyParser = require('body-parser');
+var GeneralConfigMan = require("./app/common/GeneralConfigMan");
 
 /**
  * Init app for client.
@@ -16,6 +19,12 @@ app.configure('production|development', 'connector', function(){
       useDict : true,
       useProtobuf : true
     });
+});
+
+app.configure('production|development', 'master|connector|zgate|logic|social', function () {
+    var env = app.get('env');
+    logger.info("env is " + env);
+    GeneralConfigMan.getInstance().loadConfig(env);
 });
 
 function on_user_socket_connect(app)
@@ -63,7 +72,7 @@ app.configure('production|development', 'zgate', function(){
 	};
 	var _obj = {
 		"clientcfg" : {
-			"serverip" : "192.168.1.106",
+			"serverip" : "192.168.30.100",
 	    	"serverport" : 49996, 
 			"is_server" : 0,
 			"handler"  : handler,
@@ -82,11 +91,6 @@ app.configure('production|development', 'zgate', function(){
 	}
 });
 
-app.configure('production|development', 'master|connector|zgate|logic', function () {
-    var env = app.get('env');
-    logger.info("env is " + env);
-});
-
 var logicRoute = function(playerid, msg, app, cb) {
     var logicServers = app.getServersByType('logic');
     if (!logicServers || logicServers.length === 0) {
@@ -97,6 +101,23 @@ var logicRoute = function(playerid, msg, app, cb) {
 };
 app.configure('production|development', function() {
     app.route('logic', logicRoute);
+});
+
+app.configure('production|development', 'social', function() {
+    var port = GeneralConfigMan.getInstance().getConfig().serverApiPort;
+    if (!port) {
+        return;
+    }
+    var httpServer = express();
+    httpServer.enable('trust proxy');
+    httpServer.use(bodyParser.json({ limit: '20mb' }));
+    httpServer.use(bodyParser.urlencoded({ limit: '20mb', extended: false }));
+
+    var serverApiRouter = require('./app/servers/social/ServerApiRouter');
+    httpServer.use('/', serverApiRouter);
+
+    httpServer.listen(port);
+    logger.info("start social server api on port " + port);
 });
 
 // start app
