@@ -17,6 +17,14 @@ router.get('/testget', function(req, res) {
     res.status(200).send(JSON.stringify(req.query));
 });
 
+router.get('/getgateserver', function(req, res) {
+    var playerid = 15;
+    app.rpc.balance.balanceRemote.getGateServer(playerid, 1, app.get('serverId'), function(data) {
+        res.status(200).send(JSON.stringify(data));
+    });
+});
+
+
 router.post('/testpost', function(req, res) {
     logger.warn('----------------- req.headers:%s', JSON.stringify(req.headers));
     logger.warn('----------------- req.query:%s', JSON.stringify(req.query));

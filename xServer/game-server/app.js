@@ -21,7 +21,7 @@ app.configure('production|development', 'connector', function(){
     });
 });
 
-app.configure('production|development', 'master|connector|zgate|logic|social', function () {
+app.configure('production|development', 'master|connector|zgate|logic|social|balance', function () {
     var env = app.get('env');
     logger.info("env is " + env);
     GeneralConfigMan.getInstance().loadConfig(env);
@@ -91,18 +91,6 @@ app.configure('production|development', 'zgate', function(){
 	}
 });
 
-var logicRoute = function(playerid, msg, app, cb) {
-    var logicServers = app.getServersByType('logic');
-    if (!logicServers || logicServers.length === 0) {
-        throw new Error("0 logic servers to route");
-    }
-    var index = playerid % logicServers.length;
-    cb(null, logicServers[index].id);
-};
-app.configure('production|development', function() {
-    app.route('logic', logicRoute);
-});
-
 app.configure('production|development', 'social', function() {
 	// http request service
     var httpApiPort = GeneralConfigMan.getInstance().getConfig().serverApiPort;
@@ -142,6 +130,30 @@ app.configure('production|development', 'social', function() {
 
     httpMonitorServer.listen(httpMonitorPort);
     logger.info("start http monitor service on port " + httpMonitorPort);
+});
+
+var logicRoute = function(playerid, msg, app, cb) {
+    var logicServers = app.getServersByType('logic');
+    if (!logicServers || logicServers.length === 0) {
+        throw new Error("0 logic servers to route");
+    }
+    var index = playerid % logicServers.length;
+    cb(null, logicServers[index].id);
+};
+app.configure('production|development', function() {
+    app.route('logic', logicRoute);
+});
+
+var balanceRoute = function(playerid, msg, app, cb) {
+    var balanceServers = app.getServersByType('balance');
+    if (!balanceServers || balanceServers.length === 0) {
+        throw new Error("0 balance servers to route");
+    }
+    var index = playerid % balanceServers.length;
+    cb(null, balanceServers[index].id);
+};
+app.configure('production|development', function() {
+    app.route('balance', balanceRoute);
 });
 
 // start app

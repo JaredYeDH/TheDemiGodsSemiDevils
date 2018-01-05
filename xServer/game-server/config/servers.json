@@ -23,6 +23,13 @@
         "host": "127.0.0.1",
         "port": 7001
       }
+    ],
+    "balance": [
+      {
+        "id": "balance-server-1",
+        "host": "127.0.0.1",
+        "port": 8001
+      }
     ]
   },
   "production":{
@@ -48,6 +55,13 @@
         "id": "social-server-1",
         "host": "127.0.0.1",
         "port": 7001
+      }
+    ],
+    "balance": [
+      {
+        "id": "balance-server-1",
+        "host": "127.0.0.1",
+        "port": 8001
       }
     ]
   }
