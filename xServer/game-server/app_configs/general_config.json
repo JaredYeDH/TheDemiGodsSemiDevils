@@ -1,10 +1,10 @@
 {
   "development" : {
-    "httpServerPort" : 60008,
-    "serverApiPort" : 60010
+    "serverApiPort" : 60008,
+    "httpServerPort" : 60010
   },
   "production" : {
-    "httpServerPort" : 60008,
-    "serverApiPort" : 60010
+    "serverApiPort" : 60008,
+    "httpServerPort" : 60010
   }
 }

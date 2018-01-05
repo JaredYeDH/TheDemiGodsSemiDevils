@@ -1,0 +1,34 @@
+body{font-size: 12px}
+body aside h3.ui-accordion-header{padding-left: 26px}
+body.ui-layout-container aside.ui-layout-west nav.ui-accordion-content {
+	padding-left: 8px;
+	padding-right: 8px
+}
+mark.development{color: green}
+mark.production{color: red}
+body.ui-layout-container section.ui-layout-center div.right_top_header{
+  margin-bottom: 10px;
+  font-size: 11px;
+}
+#tabs li .ui-icon-close { float: left; margin: 0.4em 0.2em 0 0; cursor: pointer; }
+span.china_time{background: none repeat scroll 0 0 #CCFFFF;}
+span.us_time{background: none repeat scroll 0 0 #CCFFCC;}
+span.utc_time{background: none repeat scroll 0 0 #CCCCFF;}
+#accordion nav a {
+    color: #666666;
+    display: inline-block;
+    padding-left: 25px;
+    text-decoration: none;
+    text-shadow: 0 1px 0 #FFFFFF;
+}
+#accordion nav a:hover {
+    text-decoration: underline;
+}
+
+p.label {
+	color: #333333;
+}
+
+/*#accordion nav p {
+	color: #333333;
+}*/

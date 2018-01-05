@@ -1,0 +1,10 @@
+include "../layouts/iframe_layout.blade"
+
+replace block body
+	.container-fluid
+		h3 Query String:
+
+		form(action="mysqlquery" method="post")
+			input(type="text" name="querystr" size="100")
+			br
+			input(type="submit" value="Query")

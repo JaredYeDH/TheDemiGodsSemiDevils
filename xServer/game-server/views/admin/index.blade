@@ -1,0 +1,65 @@
+include "../layouts/index_layout.blade"
+
+replace block body
+	aside(class="ui-layout-west")
+		section#accordion(class="ui-accordion ui-widget")
+			-var loginControls = ["AllowLogin", "ForbidLogin"];
+			-var whitelistopertype = ["Add", "Delete"];
+			h3 Query OperVersion
+			nav
+				button#query_operversion(url="queryoperversion") QueryOperVersion
+				br
+				p.label Oper Version:
+				br
+				input#oper_version(type="text")
+				br
+				button#update_oper_version(url="updateoperversion") Submit
+			h3 Query GateServers
+			nav
+				button#query_gateserver(url="querygateservers") QueryGateServers
+			h3 Delete GateServer
+			nav
+				p.label Gate Server:
+				br
+				input#bedelete_gateserver(type="text")
+				br
+				button#delete_gateserver(url="deletegateserver") Submit
+			h3 Dispatch Gate
+			nav
+				button#query_all_dispatches(url="queryalldispatches") AllDispatches
+				br
+				p.label Client Device Id:
+				br
+				input#dispatch_client_device_id(type="text")
+				br
+				p.label Gate Server:
+				br
+				input#dispatch_client_gateserver(type="text")
+				br
+				button#dispatch_client(url="dispatchclientbydeviceid") Submit
+			h3 White list
+			nav
+				select#whitelist_opertype
+					-for (var i in whitelistopertype)
+						-var operationtype = whitelistopertype[i]
+						option(value="#{operationtype}")= operationtype
+				br
+				input#playerid_to_white_list(type="text")
+				br
+				button#whitelist_oper(url="whitelist") Submit
+			h3 Login Control
+			nav
+				select#login_control_type
+					-for (var i in loginControls)
+						-var allowLogin = loginControls[i]
+						option(value="#{allowLogin}")= allowLogin
+				br
+				input#servermaintain_reason(type="text")
+				br
+				button#login_control(url="logincontrol") Submit
+	section(class="ui-layout-center")
+		#tabs
+			ul
+				li
+					a(href="#welcome") Welcome
+			iframe#welcome(src="welcome")

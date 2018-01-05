@@ -1,0 +1,40 @@
+include "../layouts/iframe_layout.blade"
+
+replace block body
+	.container-fluid
+		h2 Result:
+
+		- if(typeof error !== "undefined" && error !== null)
+			p= error
+		- else
+			-tableContent = JSON.parse(tableContent)
+			-var keys = [];
+			-var isObjectArray = false;
+			-for(var i = 0; i < tableContent.length; i++)
+				-if (typeof tableContent[i] === "object")
+					- isObjectArray = true;
+				-for(var key in tableContent[i])
+					-if (tableContent[i].hasOwnProperty(key))
+						-if (keys.indexOf(key) === -1)
+							-keys.push(key)
+			-if (isObjectArray)
+				table(border="1" style="max-width:2000px")
+					thead
+						tr
+						-for(var i = 0; i < keys.length; i++)
+							th(align="middle")= keys[i]
+					tbody
+					-for(var i = 0; i < tableContent.length; i++)
+						tr
+						-for(var j = 0; j < keys.length; j++)
+							td(align="middle")= tableContent[i][keys[j]]
+			-else
+				table(border="1" style="max-width:2000px")
+					tbody
+						tr
+						-for(var i = 0; i < tableContent.length; i++)
+							td(align="middle")= tableContent[i]
+						
+
+							
+						

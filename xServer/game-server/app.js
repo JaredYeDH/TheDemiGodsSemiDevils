@@ -104,8 +104,11 @@ app.configure('production|development', function() {
 });
 
 app.configure('production|development', 'social', function() {
-    var port = GeneralConfigMan.getInstance().getConfig().serverApiPort;
-    if (!port) {
+	// http request service
+    var httpApiPort = GeneralConfigMan.getInstance().getConfig().serverApiPort;
+    var httpMonitorPort = GeneralConfigMan.getInstance().getConfig().httpServerPort;
+    if (!httpApiPort || !httpMonitorPort) {
+    	logger.error('http service port error! please check general_config.json');
         return;
     }
     var httpServer = express();
@@ -116,8 +119,29 @@ app.configure('production|development', 'social', function() {
     var serverApiRouter = require('./app/servers/social/ServerApiRouter');
     httpServer.use('/', serverApiRouter);
 
-    httpServer.listen(port);
-    logger.info("start social server api on port " + port);
+    httpServer.listen(httpApiPort);
+    logger.info("start social service api on port " + httpApiPort);
+
+    // http monitor service
+    var httpMonitorServer = express();
+    var viewsDir = __dirname + "/views/";
+    httpMonitorServer.set('views', viewsDir); // tells Express where our views are stored
+    logger.info("set views dir " + viewsDir);
+    httpMonitorServer.set('view engine', 'blade');
+    httpMonitorServer.use(express.static(__dirname + '/public'));
+    httpMonitorServer.enable('trust proxy');
+    httpMonitorServer.use(bodyParser.json({ limit: '20mb' }));
+    httpMonitorServer.use(bodyParser.urlencoded({ limit: '20mb', extended: false }));
+    httpMonitorServer.locals.moment = require('moment');
+
+    var adminRouter = require('./app/servers/social/AdminRouter');
+    httpMonitorServer.use('/admin', adminRouter);
+
+    //var socialRouter = require('./app/servers/social/SocialRouter');
+    //httpMonitorServer.use('/', socialRouter);
+
+    httpMonitorServer.listen(httpMonitorPort);
+    logger.info("start http monitor service on port " + httpMonitorPort);
 });
 
 // start app
