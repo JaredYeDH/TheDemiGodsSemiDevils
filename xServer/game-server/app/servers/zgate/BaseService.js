@@ -7,22 +7,19 @@ var pomelo = require('pomelo');
 var logger = require('pomelo-logger').getLogger('pomelo');
 var MsgProtobuf = require('../../../modules/MsgProtobuf');
 
-function on_user_socket_connect()
-{
-	this.handle = function(s)
-	{
-        logger.warn("on_user_socket_connect,ip:"+s.c_ip+",port:"+ s.c_port);
-	    /*
-	    s.nAliveTime = (new Date()).getTime();
-	    s.interval = setInterval(function(){
-	        help_user_tick(s);
-	    },3*1000);*/
-	    /*
+function onCnnection() {
+	this.handle = function(s) {
+        logger.warn("onCnnection,ip:"+s.c_ip+",port:"+ s.c_port);
 	    let playerid = 15;
 	    app.rpc.logic.logicRemote.testRpcOpr(playerid, 1, app.get('serverId'), 15, 15, function(res) {
-			logger.error('-------------------------------' + res);
-		});*/
+			logger.warn('------------------------------- rpc test res : ' + res);
+		});
+	}
+}
 
+function onConnected() {
+	this.handle = function(s) {
+        logger.warn("onConnected, ip:"+s.c_ip+", port:"+ s.c_port);
 		let protoNameSpace = MsgProtobuf.getInstance().Messages('GSToCS');
         let sndData = {
             msgid : protoNameSpace.MsgID.eMsgToCSFromGS_AskRegiste,
@@ -36,35 +33,39 @@ function on_user_socket_connect()
 	}
 }
 
-function on_user_socket_close()
-{
-	this.handle = function(s)
-	{
-        logger.warn("on_user_socket_close ,ip:"+s.c_ip+",port:"+ s.c_port);
+function onClosed() {
+	this.handle = function(s) {
+        logger.warn("onClosed ,ip:"+s.c_ip+",port:"+ s.c_port);
 	}
 }
 
-var Handler = {
-	"___connect___" : new on_user_socket_connect(),
-	"___close___"  : new on_user_socket_close(),
+var ServerSideHandler = {
+	"___connect___" : new onCnnection(),
+	"___close___"  : new onClosed(),
+};
+
+var ClientSideHandler = {
+	"___connect___" : new onConnected(),
+	"___close___"  : new onClosed(),
 };
 
 var serverObj = {
 	"zgate_1" :{
 		"is_server" : 1,
-		"handler" : Handler,
+		"handler" : ServerSideHandler,
 		"serverport" : 49996
 	}
 };
-exports.serverObj = serverObj;
 
 var clientObj = {
 	"clientcfg" : {
 		"serverip" : "192.168.30.100",
     	"serverport" : 49996, 
 		"is_server" : 0,
-		"handler"  : Handler,
+		"handler"  : ClientSideHandler,
         "retry"   : true
     }
 };
+
+exports.serverObj = serverObj;
 exports.clientObj = clientObj;
