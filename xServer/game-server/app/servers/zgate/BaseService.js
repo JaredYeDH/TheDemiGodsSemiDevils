@@ -45,8 +45,8 @@ function on_user_socket_close()
 }
 
 var Handler = {
-	"___connect___" : new on_user_socket_connect(app),
-	"___close___"  : new on_user_socket_close(app),
+	"___connect___" : new on_user_socket_connect(),
+	"___close___"  : new on_user_socket_close(),
 };
 
 var serverObj = {
@@ -61,7 +61,7 @@ exports.serverObj = serverObj;
 var clientObj = {
 	"clientcfg" : {
 		"serverip" : "192.168.30.100",
-    	"serverport" : 10002, 
+    	"serverport" : 49996, 
 		"is_server" : 0,
 		"handler"  : Handler,
         "retry"   : true
