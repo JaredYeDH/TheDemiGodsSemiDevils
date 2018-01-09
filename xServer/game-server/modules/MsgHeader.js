@@ -1,6 +1,9 @@
 var MsgHeader = function() {
     this._size =  0xFF;          // 消息大小 含消息头本身大小字节数
     this._type =  0xEE;          // 消息号
+    this._placeHolder1 = 0xFF;   // 服务器之间通信用于 伪装消息号
+    this._placeHolder2 = 0xFF;   // 服务器之间通信用于 GateID识别玩家连接在哪个GATE
+
 
     this._endian = 'B';
     /*
@@ -27,6 +30,8 @@ MsgHeader.prototype.peek = function(buf) {
     let offset = 0;
     this._size = buf['readUInt' + (8*varLen) + ''+ this._endian +'E'](offset); offset += varLen;
     this._type = buf['readUInt' + (8*varLen) + ''+ this._endian +'E'](offset); offset += varLen;
+    this._placeHolder1 = buf['readUInt' + (8*varLen) + ''+ this._endian +'E'](offset); offset += varLen;
+    this._placeHolder2 = buf['readUInt' + (8*varLen) + ''+ this._endian +'E'](offset); offset += varLen;
 };
 
 MsgHeader.prototype.fill = function(buf) {
@@ -36,10 +41,12 @@ MsgHeader.prototype.fill = function(buf) {
     let offset = 0;
     buf['writeUInt' + (8*varLen) + ''+ this._endian +'E'](this._size, offset); offset += varLen;
     buf['writeUInt' + (8*varLen) + ''+ this._endian +'E'](this._type, offset); offset += varLen;
+    buf['writeUInt' + (8*varLen) + ''+ this._endian +'E'](this._placeHolder1, offset); offset += varLen;
+    buf['writeUInt' + (8*varLen) + ''+ this._endian +'E'](this._placeHolder2, offset); offset += varLen;
 };
 
 MsgHeader.prototype.size = function() {
-    return 8;
+    return 16;
 };
 
 module.exports = MsgHeader;

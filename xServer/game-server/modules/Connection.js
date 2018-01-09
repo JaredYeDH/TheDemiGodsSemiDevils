@@ -90,8 +90,8 @@ Connection.prototype.sendMessage = function(command, buffer) {
 
     var self = this;
     if(self.socket.writable) {
-        //self.socket.write(_newbuffer);
-        
+        self.socket.write(_newbuffer);
+        /*
         let ___newbuffer = new Buffer(_newbuffer.length*2);
         _newbuffer.copy(___newbuffer, 0, 0, _newbuffer.length);
         _newbuffer.copy(___newbuffer, _newbuffer.length, 0, _newbuffer.length);
@@ -104,7 +104,8 @@ Connection.prototype.sendMessage = function(command, buffer) {
         self.socket.write(_bufferSlice);
         _bufferSlice = _newbuffer.slice(_randval2, _newbuffer.length);
         self.socket.write(_bufferSlice);
-        
+        */
+        logger.debug('send message : ' + JSON.stringify(_msgHeader));
     } else {
         logger.error("socket write err,writable :" + self.socket.writable + ', proto info:' + JSON.stringify(_msgHeader));
         self.onClose();
