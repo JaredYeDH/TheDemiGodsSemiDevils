@@ -7,7 +7,9 @@ var MsgProtobuf = require('./MsgProtobuf');
 var ProtocolMan = require('./ProtocolMan');
 var Random = require('../app/common/Random');
 
-var SocketNet = function() {};
+var SocketNet = function() {
+    this.service = null;
+};
 
 SocketNet.prototype.start_server = function(obj, cb) {
     var self = this;
@@ -193,6 +195,9 @@ SocketNet.prototype.start_server = function(obj, cb) {
                             } else if (socketClient.connectStatus) {
                                 let _now = Date.now();
                                 if (_now - socketClient.lastHeartBeatTime > 30*1000) {
+                                    if(info.handler["___heartbeat___"])
+                                        info.handler["___heartbeat___"].handle();
+                                    /*
                                     let protoNameSpace = MsgProtobuf.getInstance().Messages('SysProto');
                                     let sndData = {
                                         msgid : protoNameSpace.MsgID.SysProto_HeartBeat,
@@ -202,6 +207,7 @@ SocketNet.prototype.start_server = function(obj, cb) {
                                     let protoMsg = protoNameSpace.HeartBeat.create(sndData);
                                     let __bytes = protoNameSpace.HeartBeat.encode(protoMsg).finish();
                                     socketClient.connection.sendMessage(protoMsg.msgid, __bytes);
+                                    */
                                     socketClient.lastHeartBeatTime = _now;
                                 }
                             }
@@ -215,11 +221,13 @@ SocketNet.prototype.start_server = function(obj, cb) {
     }
 
     if(socket_server) {
-        self.socket_server = socket_server;
+        self.service = socket_server;
+    } else if (socketClient) {
+        self.service = socketClient;
     }
 
     if(cb) {
-        cb(self);
+        cb(self.service);
     }
 };
 

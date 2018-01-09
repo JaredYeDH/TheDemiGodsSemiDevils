@@ -6,6 +6,7 @@ var app = require('pomelo').app;
 var pomelo = require('pomelo');
 var logger = require('pomelo-logger').getLogger('pomelo');
 var MsgProtobuf = require('../../../modules/MsgProtobuf');
+var CenterServerMgr = require('./CenterServerMgr');
 
 function onCnnection() {
 	this.handle = function(s) {
@@ -29,7 +30,34 @@ function onConnected() {
 
         let protoMsg = protoNameSpace.AskRegiste.create(sndData);
         let __bytes = protoNameSpace.AskRegiste.encode(protoMsg).finish();
-        s.connection.sendMessage(protoMsg.msgid, __bytes);
+        //s.connection.sendMessage(protoMsg.msgid, __bytes);
+        CenterServerMgr.getDao().sendMessage(protoMsg.msgid, __bytes);
+	}
+}
+
+function onGS2CSHeartBeat() {
+	this.handle = function() {
+        let protoNameSpace = MsgProtobuf.getInstance().Messages('GSToCS');
+        let sndData = {
+            msgid : protoNameSpace.MsgID.eMsgToCSFromGS_AskPing,
+            time : Date.now() / 1000,
+        }
+        let protoMsg = protoNameSpace.Asking.create(sndData);
+        let __bytes = protoNameSpace.Asking.encode(protoMsg).finish();
+        CenterServerMgr.getDao().sendMessage(protoMsg.msgid, __bytes);
+	}
+}
+
+function onGS2SSHeartBeat() {
+	this.handle = function() {
+        let protoNameSpace = MsgProtobuf.getInstance().Messages('GSToSS');
+        let sndData = {
+            msgid : protoNameSpace.MsgID.eMsgToSSFromGS_AskPing,
+            time : Date.now() / 1000,
+        }
+        let protoMsg = protoNameSpace.AskPing.create(sndData);
+        let __bytes = protoNameSpace.AskPing.encode(protoMsg).finish();
+        CenterServerMgr.getDao().sendMessage(protoMsg.msgid, __bytes);
 	}
 }
 
@@ -44,9 +72,16 @@ var ServerSideHandler = {
 	"___close___"  : new onClosed(),
 };
 
-var ClientSideHandler = {
+var GS2CSHandler = {
 	"___connect___" : new onConnected(),
 	"___close___"  : new onClosed(),
+	"___heartbeat___" : new onGS2CSHeartBeat(),
+};
+
+var GS2SSHandler = {
+	"___connect___" : new onConnected(),
+	"___close___"  : new onClosed(),
+	"___heartbeat___" : new onGS2SSHeartBeat(),
 };
 
 var serverObj = {
@@ -60,12 +95,14 @@ var serverObj = {
 var clientObj = {
 	"clientcfg" : {
 		"serverip" : "192.168.30.100",
-    	"serverport" : 49996, 
+    	"serverport" : 10002, 
 		"is_server" : 0,
-		"handler"  : ClientSideHandler,
+		"handler"  : GS2CSHandler,
         "retry"   : true
     }
 };
 
+exports.GS2CSHandler = GS2CSHandler;
+exports.GS2SSHandler = GS2SSHandler;
 exports.serverObj = serverObj;
 exports.clientObj = clientObj;

@@ -32,12 +32,13 @@ app.configure('production|development', 'zgate', function(){
 	var MsgProtobuf = require("./modules/MsgProtobuf");
 	var ProtocolRegistry = require('./app/servers/zgate/ProtocolRegistry');
 	var BaseService = require('./app/servers/zgate/BaseService');
+	var CenterServerMgr = require('./app/servers/zgate/CenterServerMgr');
 	var zgate = new SocketNet;
 	if (MsgProtobuf.getInstance().loadProto()) {
 		ProtocolRegistry.register();
 		zgate.start_server(BaseService.serverObj,
-			function(s){
-				//game_server.server(s);
+			function(service){
+				CenterServerMgr.Init(service);
 			}
 		);
 	}
