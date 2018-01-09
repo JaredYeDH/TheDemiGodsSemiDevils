@@ -27,63 +27,15 @@ app.configure('production|development', 'master|connector|zgate|logic|social|bal
     GeneralConfigMan.getInstance().loadConfig(env);
 });
 
-function on_user_socket_connect(app)
-{
-	this._app = app;
-	this.handle = function(s)
-	{
-        logger.warn("on_user_socket_connect,ip:"+s.c_ip+",port:"+ s.c_port);
-	    /*
-	    s.nAliveTime = (new Date()).getTime();
-	    s.interval = setInterval(function(){
-	        help_user_tick(s);
-	    },3*1000);*/
-	    let playerid = 15;
-	    this._app.rpc.logic.logicRemote.testRpcOpr(playerid, 1, this._app.get('serverId'), 15, 15, function(res) {
-			logger.error('-------------------------------' + res);
-		});
-	}
-}
-
-function on_user_socket_close(app)
-{
-	this._app = app;
-	this.handle = function(s)
-	{
-        logger.warn("on_user_socket_close ,ip:"+s.c_ip+",port:"+ s.c_port);
-	}
-}
-
-var handler = {
-	"___connect___" : new on_user_socket_connect(app),
-	"___close___"  : new on_user_socket_close(app),
-};
-
 app.configure('production|development', 'zgate', function(){
 	var SocketNet = require("./modules/SocketNet");
 	var MsgProtobuf = require("./modules/MsgProtobuf");
 	var ProtocolRegistry = require('./app/servers/zgate/ProtocolRegistry');
-	var obj = {
-		"zgate_1" :{
-			"is_server" : 1,
-			"handler" : handler,
-			"serverport" : 49996
-		}
-	};
-	var _obj = {
-		"clientcfg" : {
-			"serverip" : "192.168.30.100",
-	    	"serverport" : 49996, 
-			"is_server" : 0,
-			"handler"  : handler,
-	        "retry"   : true
-	    }
-	};
-
+	var BaseService = require('./app/servers/zgate/BaseService');
 	var zgate = new SocketNet;
 	if (MsgProtobuf.getInstance().loadProto()) {
 		ProtocolRegistry.register();
-		zgate.start_server(obj,
+		zgate.start_server(BaseService.serverObj,
 			function(s){
 				//game_server.server(s);
 			}
