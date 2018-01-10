@@ -36,7 +36,7 @@ app.configure('production|development', 'zgate', function(){
 	var zgate = new SocketNet;
 	if (MsgProtobuf.getInstance().loadProto()) {
 		ProtocolRegistry.register();
-		zgate.start_server(BaseService.serverObj,
+		zgate.start_server(BaseService.CenterServerInfoCfg,
 			function(service){
 				CenterServerMgr.Init(service);
 			}
