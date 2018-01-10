@@ -1,0 +1,120 @@
+package GYGCToSS;
+
+enum MsgID
+{
+	eMsgToGSToSSFromGC_Begin = 16384;
+	eMsgToGSToSSFromGC_AskMoveDir = 16385;	// 请求移动
+	eMsgToGSToSSFromGC_AskChangeChunk = 16386;	// 请求切换地图块
+	eMsgToGSToSSFromGC_AskStopMove = 16387;	// 请求停止移动
+	eMsgToGSToSSFromGC_AskUseSkill = 16388;	// 请求使用技能
+	eMsgToGSToSSFromGC_CombineSkill = 16389;	// 往英雄技能槽位放技能
+	eMsgToGSToSSFromGC_EquipSkill = 16390;		// 往释放技能槽位放技能
+
+	eMsgToGSToSSFromGC_AskDungeonExecuteEvent = 16391; // 副本中执行事件
+	eMsgToGSToSSFromGC_AskNextDungeonEventUnit = 16392; // 请求下一个事件单位ID
+	eMsgToGSToSSFromGC_AskNextDungeonFloor = 16393; 	// 切换到下一层
+	eMsgToGSToSSFromGC_AskPickUpItem = 16394;           // 请求捡起物品
+	
+	eMsgToGSToSSFromGC_End = 17000;			// 结束符
+}
+
+// 位置信息 单位 厘米
+message Position
+{
+	optional int32 x = 1;		// x坐标
+	optional int32 z = 2;		// z坐标
+}
+
+// 方向信息
+message Direction
+{
+	optional float x = 1;
+	optional float z = 2;
+	optional float angle = 3;
+}
+
+// 请求同块移动
+message AskMoveDir
+{
+	optional MsgID msgid = 1 [default = eMsgToGSToSSFromGC_AskMoveDir];
+	optional Direction dir = 2;	// 移动方向
+	optional Position pos = 3;  // 移动起始位置
+}
+
+// 请求切换块移动
+message AskChangeChunk
+{
+	optional MsgID msgid = 1 [default = eMsgToGSToSSFromGC_AskChangeChunk];
+	optional Direction dir = 2;	// 移动方向
+	optional int32 oldChunkIndex = 3;	// 旧块索引
+	optional Position oldPos = 4;	// 旧块位置
+	optional int32 newChunkIndex = 5;	// 新块索引
+	optional Position newPos = 6;	// 新块位置
+} 
+
+// 请求停止移动
+message AskStopMove
+{
+	optional MsgID msgid = 1 [default = eMsgToGSToSSFromGC_AskStopMove];
+	optional Direction dir = 2;	// 当前方向
+	optional Position pos = 3;  // 当前位置
+}
+
+// 使用技能
+message AskUseSkill
+{
+	optional MsgID msgid = 1 [default = eMsgToGSToSSFromGC_AskUseSkill];
+	optional int32 skillId = 2;	// 技能ID
+}
+
+// 角色技能孔数据
+message SkillSlotData
+{
+	optional int32 slotId = 1;	// 孔ID
+	optional int32 skillId = 2; 	//技能ID
+}
+
+// 组合技能
+message AskCombineSkill
+{
+	optional MsgID msgid = 1 [default = eMsgToGSToSSFromGC_CombineSkill];
+	optional SkillSlotData skillSlotData = 2;		// 技能孔数据
+}
+
+// 装配技能
+message AskEquipSkill
+{
+	optional MsgID msgid = 1 [default = eMsgToGSToSSFromGC_EquipSkill];
+	optional int32 slotId = 2;	// 孔ID
+	optional int32 skillId = 3; 	//技能ID
+	optional string sourceGuid = 4;	// 来自谁
+	optional int32 sourceSlotId = 5;	// 来自哪个槽位
+}
+
+// 副本中执行事件
+message AskDungeonExecuteEvent
+{
+	optional MsgID msgid = 1 [default = eMsgToGSToSSFromGC_AskDungeonExecuteEvent];
+	optional string objGuid = 2;		// 触发事件的guid
+	optional int32  eventIndex = 3;     // 事件索引
+}
+
+// 请求下一个事件单位ID
+message AskNextDungeonEventUnit
+{
+	optional MsgID msgid = 1 [default = eMsgToGSToSSFromGC_AskNextDungeonEventUnit];
+	optional string objGuid = 2;		// 事件实体的guid
+}
+
+// 请求进入下一层
+message AskNextDungeonFloor
+{
+	optional MsgID msgid = 1 [default = eMsgToGSToSSFromGC_AskNextDungeonFloor];
+}
+
+message AskPickUpItem
+{
+	optional MsgID msgid = 1 [default = eMsgToGSToSSFromGC_AskPickUpItem];
+	optional string itemGuid = 2;   // 要拾起的物品guid
+}
+

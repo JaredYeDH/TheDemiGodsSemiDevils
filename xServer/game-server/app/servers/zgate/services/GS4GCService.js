@@ -26,9 +26,34 @@ function onClose() {
 	}
 }
 
+function onTransmit() {
+    this.handle = function(msgheader, buffer) {
+        let ret = false;
+        do {
+            let protoNameSpace = MsgProtobuf.getInstance().Messages('GYGCToCS');
+            if (msgheader._type > protoNameSpace.MsgID.eMsgToSSFromGS_AskPing
+                && msgheader._type > protoNameSpace.MsgID.eMsgToGSToCSFromGC_End) {
+                CenterServerMgr.getDao().sendMessage(msgheader._type, buffer);
+                logger.warn("gate server transmit msg to center server, detail:"+JSON.stringify(msgheader));
+                ret = true;
+                break;
+            }
+            protoNameSpace = MsgProtobuf.getInstance().Messages('GYGCToSS');
+            if (msgheader._type > protoNameSpace.MsgID.eMsgToGSToSSFromGC_Begin
+                && msgheader._type > protoNameSpace.MsgID.eMsgToGSToSSFromGC_End) {
+                SSBattleServerMgr.getInstance().Get(20001).sendMessage(msgheader._type, buffer);
+                logger.warn("gate server transmit msg to battlemgr server, detail:"+JSON.stringify(msgheader));
+                ret = true;
+            }
+        } while(0);
+        return ret;
+    }
+}
+
 var Handler = {
 	"___connect___" : new onCnnect(),
 	"___close___"  : new onClose(),
+    "___transmit___" : new onTransmit(),
 };
 
 var GS4GCServiceCfg = {

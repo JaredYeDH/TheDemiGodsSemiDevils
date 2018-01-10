@@ -31,6 +31,14 @@ router.post('/verifyaccount', function(req, res) {
     logger.warn('----------------- req.params:%s', JSON.stringify(req.params));
     logger.warn('----------------- req.body:%s', JSON.stringify(req.body));
     //res.status(200).send('test post worked.');
+    var verifyRequst = {
+        'ostype' : -1,
+        'platformtype' : -1,
+        'udid' : null,
+        'deviceid' : null,
+        'access_token' : null,
+        'clientver' : '',
+    };
     var playerid = 15;
     app.rpc.balance.balanceRemote.getGateServer(playerid, 1, app.get('serverId'), function(data) {
         var verifyResult = {

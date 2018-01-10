@@ -39,13 +39,19 @@ SocketNet.prototype.start_server = function(obj, cb) {
                             //当服务端收到完整的包时
                             function onReceivePackData(msgheader, buffer) {
                                 try {
-                                    var protocolFunc = ProtocolMan.getInstance().getProtocol(msgheader._type);
-                                    if (!protocolFunc) {
-                                        logger.error("unrecognize proto _type %d", msgheader._type);
-                                    } else {
-                                        logger.debug("begin execute proto _type %d", msgheader._type);
-                                        //var protocol = new protocolFunc();
-                                        protocolFunc.execute(_connection, msgheader, buffer);
+                                    let ret = false;
+                                    if(info.handler["___transmit___"]) { // 转发消息
+                                        ret = info.handler["___transmit___"].handle(msgheader, buffer);
+                                    }
+                                    if (!ret) { // 单独处理消息
+                                        var protocolFunc = ProtocolMan.getInstance().getProtocol(msgheader._type);
+                                        if (!protocolFunc) {
+                                            logger.error("unrecognize proto _type %d", msgheader._type);
+                                        } else {
+                                            logger.debug("begin execute proto _type %d", msgheader._type);
+                                            //var protocol = new protocolFunc();
+                                            protocolFunc.execute(_connection, msgheader, buffer);
+                                        }
                                     }
                                 } catch(err) {
                                     logger.error("handle msg failed, err stack : " + err.stack);
@@ -127,13 +133,19 @@ SocketNet.prototype.start_server = function(obj, cb) {
                                 //当客户端收到完整的包时
                                 function onReceivePackData(msgheader, buffer){
                                     try {
-                                        var protocolFunc = ProtocolMan.getInstance().getProtocol(msgheader._type);
-                                        if (!protocolFunc) {
-                                            logger.error("unrecognize proto _type %d", msgheader._type);
-                                        } else {
-                                            logger.debug("begin execute proto _type %d", msgheader._type);
-                                            //var protocol = new protocolFunc();
-                                            protocolFunc.execute(_connection, msgheader, buffer);
+                                        let ret = false;
+                                        if(info.handler["___transmit___"]) { // 转发消息
+                                            ret = info.handler["___transmit___"].handle(msgheader, buffer);
+                                        }
+                                        if (!ret) { // 单独处理消息
+                                            let protocolFunc = ProtocolMan.getInstance().getProtocol(msgheader._type);
+                                            if (!protocolFunc) {
+                                                logger.error("unrecognize proto _type %d", msgheader._type);
+                                            } else {
+                                                logger.debug("begin execute proto _type %d", msgheader._type);
+                                                //let protocol = new protocolFunc();
+                                                protocolFunc.execute(_connection, msgheader, buffer);
+                                            }
                                         }
                                     } catch(err) {
                                         logger.error("handle msg failed, err stack : " + err.stack);

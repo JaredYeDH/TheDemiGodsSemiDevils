@@ -1,0 +1,410 @@
+package GYGSToGC;
+
+enum MsgID
+{
+	eMsgToGCFromGS_Begin = 0;
+	eMsgToGCFromGS_UserData = 1;				// 用户数据
+	eMsgToGCFromGS_PlayerLoginData = 2;			// 角色登录相关数据
+	eMsgToGCFromGS_NotifySelectRole = 3;		// 通知客户端选择角色成功
+	eMsgToGCFromGS_NotifyObjectAttribute = 4; 	// 角色属性变化
+	eMsgToGCFromGS_GCAskRet = 5;                // 消息转接            
+	eMsgToGCFromGS_MoveState = 101;				// 移动状态
+	eMsgToGCFromGS_FreeState = 102;				// 空闲状态
+	eMsgToGCFromGS_ReleaseSkillState = 104;		// 技能前摇状态
+	eMsgToGCFromGS_DeadState = 105;				// 死亡状态
+	
+	eMsgToGCFromGS_NotifyCombineSkill = 111;	// 通知组合技能槽位变化
+	eMsgToGCFromGS_NotifyEquipSkill = 112;		// 通知装配技能槽位变化
+	eMsgToGCFromGS_NotifyUpdateDungeonObjectEntityEvent = 113; // 通知更新副本事件进度
+	
+	eMsgToGCFromGS_CreateBullet = 201;			// 创建子弹
+	eMsgToGCFromGS_DestroyBullet = 202;			// 销毁子弹
+	
+	eMsg_Empty203 = 203;							// 占位
+	eMsg_Empty204 = 204;							// 占位
+	
+	
+	eMsgToGCFromGS_NotifyHpChange = 205;		// 血量变化
+	eMsgToGCFromGS_NotifyMpChange = 206;		// 气量变化
+	
+	eMsgToGCFromGS_NotifyObjectAppear = 207;	// 通知创建新的Object
+	eMsgToGCFromGS_NotifyObjectDisapper = 208;  // 通知实体消失
+	eMsgToGCFromGS_NotifyCreateDungeon = 209; 	// 通知创建副本
+	eMsgToGCFromGS_NotifyEnterDungeon = 210;	// 通知进入副本
+	eMsgToGCFromGS_NotifyNextDungeonFloor = 211;	// 通知进入下一层，这个消息是否真的需要，需要和服务器对
+	eMsgToGCFromGS_NotifySkillBagDataUpdate= 212; 	// 通知技能背包数据变化
+	
+	eMsg_Empty512 = 512;							// 占位
+	eMsg_Empty513 = 513;							// 占位
+	
+	eMsgToGCFromGS_End = 1000;
+}
+
+//服务器中间转接
+message AskMsgRt
+{
+	optional MsgID msgid = 1[default = eMsgToGCFromGS_GCAskRet];
+	optional int32 askid = 2;
+	optional int32 errorcode = 3;
+}
+
+
+
+// 用户数据
+message UserData
+{
+	optional MsgID msgid = 1 [default = eMsgToGCFromGS_UserData];
+	optional SettingData settingData = 2;				// 用户设置信息
+	repeated PlayerLoginData playerLoginData = 3;		// 用户下面已经创建的角色基础信息，用于登录
+	optional string playerGuid = 4;					// 上次选择的角色
+}
+
+// 用户设置信息
+message SettingData
+{
+	optional bool musicOn = 1;			// 音乐开关
+	optional int32 musicVolume = 2;		// 音量
+	optional bool sfxOn = 3;			// 音效开关
+	optional int32 sfxVolume = 4;		// 音效大小
+}
+
+// 选角时候的角色信息，包含模型ID，等级，名字等基本信息
+message PlayerLoginData
+{
+	optional MsgID msgid = 1 [default = eMsgToGCFromGS_PlayerLoginData];
+	optional string guid = 2;
+	optional string name = 3;
+	optional int32 level = 4;
+	optional int32 charInfoId = 5;
+	// 可能有服装信息等
+}
+
+// 选择角色进入场景，同步当前玩家的全部数据
+message NotifySelectRole
+{
+	optional MsgID msgid = 1 [default = eMsgToGCFromGS_NotifySelectRole];
+	optional PlayerData playerData = 2;
+}
+
+// 角色完整数据
+message PlayerData
+{
+	optional PlayerBaseData playerBaseData = 1;
+	optional SkillData skillData = 2;	// 技能数据
+	repeated HeroData heros = 3;		// 英雄数据
+	repeated ItemData items = 4;		// 物品数据（先不做）
+}
+
+// 角色基础数据
+message PlayerBaseData
+{
+	optional string name = 1;
+	optional string guid = 2;
+	optional int32 level = 3;
+	optional int32 charInfoId = 4;
+	optional int32 sceneId = 5;
+}
+
+// 角色技能孔数据
+message SkillSlotData
+{
+	optional int32 slotId = 1;	// 孔ID
+	optional int32 skillId = 2; 	//技能ID
+}
+
+// 角色运行时技能孔数据
+message SkillRuntimeSlotData
+{
+	optional int32 slotId = 1;	// 孔ID
+	optional int32 skillId = 2; 	//技能ID
+	optional int32 ownerGuid = 3;	// 来自谁
+	optional int32 sourceSlotId = 4;	// 来自那个槽位
+}
+
+// 物品信息
+message ItemData
+{
+	optional string guid = 1;
+	optional int32 id = 2;
+	optional int32 used = 3;	// 是否被使用，技能书放置了
+}
+
+// 角色、英雄技能列表数据
+// 比如六个技能栏，那么最多有六条链接信息，就是每个信息里面有一个
+/*
+SkillChainData
+{
+	SkillChainSingleData 1 2 3
+	SkillChainSingleData 4 5
+	SkillChainSingleData 6
+}
+*/
+message SkillChainData
+{
+	repeated SkillChainSingleData chainSingleData = 1;
+}
+
+// 单条链的数据
+message SkillChainSingleData
+{
+	repeated int32 slotId = 1;
+}
+
+// 技能物品
+message SkillBagData
+{
+	optional int32 skillId = 1;		// 技能ID
+	optional int32 count = 2;		// 技能数量
+}
+
+// 技能数据
+message SkillData
+{
+	repeated SkillSlotData skillSlots = 1;		// 技能槽位基础信息
+	optional SkillChainData skillChain = 2;		// 技能槽位连接信息
+	repeated SkillBagData skillBagData = 3;		// 拥有技能数据
+	repeated SkillRuntimeSlotData skillRuntimeSlots = 4;	// 释放的技能槽位信息，右下角
+}
+
+// 通知技能背包数据变化
+message NotifySkillBagDataUpdate
+{
+	optional MsgID msgid = 1 [default = eMsgToGCFromGS_NotifySkillBagDataUpdate];
+	repeated SkillBagData skillBagData = 2;		// 变化的技能数据
+}
+
+// 角色英雄数据
+message HeroData
+{
+	optional int32 heroId = 1;
+}
+
+// 位置信息 单位 厘米
+message Position
+{
+	optional int32 x = 1;		// x坐标
+	optional int32 z = 2;		// z坐标
+}
+
+// 方向信息 小数点后精确4位
+message Direction
+{
+	optional int32 angle = 3;
+}
+
+// 移动状态
+message MoveState
+{
+	optional MsgID msgid = 1 [default = eMsgToGCFromGS_MoveState];
+	optional string guid = 2;
+	optional Position position = 3;
+	optional Direction direction = 4;
+	optional int32 movespeed = 5;
+	optional int32 chunkIndex = 6;
+}
+
+// 站立状态
+message FreeState
+{
+	optional MsgID msgid = 1[default = eMsgToGCFromGS_FreeState];
+	optional string guid = 2;
+	optional Position position = 3;
+	optional Direction direction = 4;
+	optional int32 chunkIndex = 5;
+}
+
+// 技能前摇
+message ReleaseSkillState
+{
+	optional MsgID msgid = 1[default = eMsgToGCFromGS_ReleaseSkillState];
+	optional string guid = 2;
+	optional int32 skillId = 3;
+	optional Position position = 4;
+	optional Direction direction = 5;
+	optional string targetGuid = 6;
+	optional int32 chunkIndex = 7;
+}
+
+// 死亡状态
+message DeadState
+{
+	optional MsgID msgid = 1 [default = eMsgToGCFromGS_DeadState];
+	optional string guid = 2;
+	optional Position position = 3;
+	optional Direction direction = 4;
+	optional int32 chunkIndex = 5;
+}
+
+// 发射子弹
+message CreateBullet
+{
+	optional MsgID msgid = 1[default = eMsgToGCFromGS_CreateBullet];
+	optional int32 uniqueId = 2;
+	optional string ownerGuid = 3;
+	optional string resPath = 4;
+	optional Direction dir = 5;	// 方向
+	optional string targetGuid = 6;	// 目标GUID
+	optional Position targetPos = 7;	// 目标位置
+	optional int32 chunkIndex = 8;
+	optional int32 speed = 9;
+}
+
+// 销毁子弹
+message DestoryBullet
+{
+	optional MsgID msgid = 1[default = eMsgToGCFromGS_DestroyBullet];
+	optional int32 uniqueId = 2;
+}
+
+// 副本地块信息
+message DungeonChunkInfo
+{
+	/* 
+	索引位置
+	6	7	8
+	3	4	5
+	0	1	2
+	*/
+	optional int32 index = 1;		// 对应地图索引
+	optional int32 chunkId = 2;		// 对应DungeonChunk表格
+}
+
+// 创建副本成功
+message NotifyCreateDungeon
+{
+	optional MsgID msgid = 1[default = eMsgToGCFromGS_NotifyCreateDungeon];
+	optional int32 dungeonId = 2;				// 副本ID
+	repeated DungeonChunkInfo chunkInfo = 3;  	// 地图拼接形状信息
+}
+
+// 进入下一层成功
+message NotifyNextDungeonFloor
+{
+	optional MsgID msgid = 1 [default = eMsgToGCFromGS_NotifyNextDungeonFloor];
+	optional int32 dungeonId = 2;				// 副本ID
+	repeated DungeonChunkInfo chunkInfo = 3;  	// 地图拼接形状信息
+}
+
+// Object 类型
+enum ObjectType
+{
+	ObjectType_Begin = 0;
+	ObjectType_Player = 1;	// 玩家
+	ObjectType_Monster = 2;	// 怪物
+	ObjectType_BookShop = 3;	// 书店
+	ObjectType_BookShelves = 4;	// 书架
+	ObjectType_Npc = 5;			// npc
+	ObjectType_Tower = 6;		// 塔
+	ObjectType_Boss = 7;		// boss
+	ObjectType_DropItem = 8;    // 掉落物品
+	ObjectType_End = 99;
+}
+
+// 基础属性，通过这个，就可以创建一个基础的Obj出来
+message ObjEntity
+{
+	optional string name = 1;
+	optional string guid = 2;	// 唯一标识ID
+	optional int32 level = 3;
+	optional int32 charInfoId = 4;
+	optional Position position = 5;
+	optional Direction direction = 6;
+	optional int32 chunkIndex = 7;
+	repeated ObjectAttribute objectAttribute = 8;
+	optional ObjectType objType = 9;
+	optional int32 eventId = 10;
+}
+
+// 通知新的Object生成
+message ObjectAppear
+{
+	optional MsgID msgid = 1[default = eMsgToGCFromGS_NotifyObjectAppear];
+	repeated ObjEntity objEntity = 2;
+}
+
+// 通知进入副本
+message NotifyEnterDungeon
+{
+	optional MsgID msgid = 1 [default = eMsgToGCFromGS_NotifyEnterDungeon];
+	repeated ObjEntity objEntity = 2;
+}
+
+// 单条属性数据
+message ObjectAttribute
+{
+	optional int32 type = 1;
+	optional int32 value = 2;
+}
+
+// 通知属性改变
+message NotifyObjectAttribute
+{
+	optional MsgID msgid = 1 [default = eMsgToGCFromGS_NotifyObjectAttribute];
+	optional string guid = 2;
+	repeated ObjectAttribute objectAttribute = 3;
+}
+
+// 属性改变原因
+enum AttributeChangeReason
+{
+	None = 0;
+	NormalHurt = 1;
+	BloastHurt = 2;
+	SkillHurt = 3;
+}
+
+// 血量改变
+message NotifyObjectHpChange
+{
+	optional MsgID msgid = 1[default = eMsgToGCFromGS_NotifyHpChange];
+	optional string guid = 2;
+	optional int32 hp = 3;
+	optional AttributeChangeReason reason = 4;
+}
+
+// 气量变化
+message NotifyObjectMpChange
+{
+	optional MsgID msgid = 1[default = eMsgToGCFromGS_NotifyMpChange];
+	optional string guid = 2;
+	optional int32 mp = 3;
+	optional AttributeChangeReason reason = 4;
+}
+
+// 技能组合槽位数据变化
+message NotifyCombineSkill
+{
+	optional MsgID msgid = 1 [default = eMsgToGCFromGS_NotifyCombineSkill];
+	optional SkillSlotData skillSlotData = 2;		// 槽位数据变化
+	optional int32 combineSkillId = 3;					// 组合技能ID
+	optional int32 combineSkillCount = 4;				// 组合技能数量
+	optional int32 replacedSkillId = 5;					// 替换下来的技能ID
+	optional int32 replacedSkillCount = 6;				// 替换下来的技能数量
+}
+
+// 技能装配槽位数据变化
+message NotifyEquipSkill
+{
+	optional MsgID msgid = 1 [default = eMsgToGCFromGS_NotifyEquipSkill];
+	optional int32 slotId = 2;	// 孔ID
+	optional int32 skillId = 3; 	//技能ID
+	optional string sourceGuid = 4;	// 来自谁
+	optional int32 sourceSlotId = 5;	// 来自哪个槽位
+}
+
+// 通知更新实体事件更新
+message NotifyUpdateDungeonObjectEntityEvent
+{
+	optional MsgID msgid = 1 [default = eMsgToGCFromGS_NotifyUpdateDungeonObjectEntityEvent];
+	optional string objGuid = 2;		 // 事件实体
+	optional int32 eventUintId = 3;      // 事件单位ID
+	optional int32 eventIndex = 4;       // 当前事件单位索引
+}
+
+
+// 通知实体消失
+message NotifyObjectDisapper
+{
+	optional MsgID msgid = 1 [default = eMsgToGCFromGS_NotifyObjectDisapper];
+	optional string objGuid = 2;		 // 实体guid
+}

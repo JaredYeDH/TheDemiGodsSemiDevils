@@ -44,10 +44,27 @@ function onClose() {
 	}
 }
 
+function onTransmit() {
+    this.handle = function(msgheader, buffer) {
+        let ret = false;
+        do {
+            let protoNameSpace = MsgProtobuf.getInstance().Messages('GYGSToGC');
+            if (msgheader._type > protoNameSpace.MsgID.eMsgToGCFromGS_Begin
+                && msgheader._type < protoNameSpace.MsgID.eMsgToGCFromGS_End) {
+                CenterServerMgr.getDao().sendMessage(msgheader._type, buffer);
+                logger.warn("gate server transmit center msg to client, detail:"+JSON.stringify(msgheader));
+                ret = true;
+            }
+        } while(0);
+        return ret;
+    }
+}
+
 var Handler = {
 	"___connect___" : new onConnect(),
 	"___close___"  : new onClose(),
 	"___heartbeat___" : new onHeartBeat(),
+    "___transmit___" : new onTransmit(),
 };
 
 var CenterServerInfoCfg = {
