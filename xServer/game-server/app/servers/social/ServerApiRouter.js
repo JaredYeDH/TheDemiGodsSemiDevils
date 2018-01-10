@@ -25,13 +25,20 @@ router.get('/getgateserver', function(req, res) {
 });
 
 
-router.post('/testpost', function(req, res) {
+router.post('/verifyaccount', function(req, res) {
     logger.warn('----------------- req.headers:%s', JSON.stringify(req.headers));
     logger.warn('----------------- req.query:%s', JSON.stringify(req.query));
     logger.warn('----------------- req.params:%s', JSON.stringify(req.params));
     logger.warn('----------------- req.body:%s', JSON.stringify(req.body));
-    //res.send(200, 'test post worked.');
-    res.status(200).send('test post worked.')
+    //res.status(200).send('test post worked.');
+    var playerid = 15;
+    app.rpc.balance.balanceRemote.getGateServer(playerid, 1, app.get('serverId'), function(data) {
+        var verifyResult = {
+            code : 1,
+            serverlist : data
+        }
+        res.status(200).send(JSON.stringify(verifyResult));
+    });
 });
 
 
