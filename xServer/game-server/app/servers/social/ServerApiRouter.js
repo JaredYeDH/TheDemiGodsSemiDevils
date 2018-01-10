@@ -41,9 +41,11 @@ router.post('/verifyaccount', function(req, res) {
     };
     var playerid = 15;
     app.rpc.balance.balanceRemote.getGateServer(playerid, 1, app.get('serverId'), function(data) {
-        var verifyResult = {
+        let svrList = new Array();
+        svrList.push(data);
+        let verifyResult = {
             code : 1,
-            serverlist : data
+            serverlist : svrList
         }
         res.status(200).send(JSON.stringify(verifyResult));
     });
