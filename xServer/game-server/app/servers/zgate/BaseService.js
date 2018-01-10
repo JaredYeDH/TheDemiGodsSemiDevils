@@ -7,6 +7,7 @@ var pomelo = require('pomelo');
 var logger = require('pomelo-logger').getLogger('pomelo');
 var MsgProtobuf = require('../../../modules/MsgProtobuf');
 var CenterServerMgr = require('./CenterServerMgr');
+var SSBattleServerMgr = require('./SSBattleServerMgr');
 
 function onCnnection() {
 	this.handle = function(s) {
@@ -18,9 +19,9 @@ function onCnnection() {
 	}
 }
 
-function onConnected() {
+function onGS2CSConnected() {
 	this.handle = function(s) {
-        logger.warn("onConnected, ip:"+s.c_ip+", port:"+ s.c_port);
+        logger.warn("onGS2CSConnected, ip:"+s.c_ip+", port:"+ s.c_port);
 		let protoNameSpace = MsgProtobuf.getInstance().Messages('GSToCS');
         let sndData = {
             msgid : protoNameSpace.MsgID.eMsgToCSFromGS_AskRegiste,
@@ -48,6 +49,23 @@ function onGS2CSHeartBeat() {
 	}
 }
 
+function onGS2SSConnected() {
+	this.handle = function(s) {
+        logger.warn("onGS2SSConnected, ip:"+s.c_ip+", port:"+ s.c_port);
+		let protoNameSpace = MsgProtobuf.getInstance().Messages('GSToSS');
+        let sndData = {
+            msgid : protoNameSpace.MsgID.eMsgToSSFromGS_AskRegiste,
+            gsid : 30001,
+            pwd : "123456"
+        }
+
+        let protoMsg = protoNameSpace.AskRegiste.create(sndData);
+        let __bytes = protoNameSpace.AskRegiste.encode(protoMsg).finish();
+        //s.connection.sendMessage(protoMsg.msgid, __bytes);
+        SSBattleServerMgr.getInstance().Get(20001).sendMessage(protoMsg.msgid, __bytes);
+	}
+}
+
 function onGS2SSHeartBeat() {
 	this.handle = function() {
         let protoNameSpace = MsgProtobuf.getInstance().Messages('GSToSS');
@@ -57,7 +75,7 @@ function onGS2SSHeartBeat() {
         }
         let protoMsg = protoNameSpace.AskPing.create(sndData);
         let __bytes = protoNameSpace.AskPing.encode(protoMsg).finish();
-        CenterServerMgr.getDao().sendMessage(protoMsg.msgid, __bytes);
+        SSBattleServerMgr.getInstance().Get(20001).sendMessage(protoMsg.msgid, __bytes);
 	}
 }
 
@@ -73,13 +91,13 @@ var ServerSideHandler = {
 };
 
 var GS2CSHandler = {
-	"___connect___" : new onConnected(),
+	"___connect___" : new onGS2CSConnected(),
 	"___close___"  : new onClosed(),
 	"___heartbeat___" : new onGS2CSHeartBeat(),
 };
 
 var GS2SSHandler = {
-	"___connect___" : new onConnected(),
+	"___connect___" : new onGS2SSConnected(),
 	"___close___"  : new onClosed(),
 	"___heartbeat___" : new onGS2SSHeartBeat(),
 };

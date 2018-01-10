@@ -4,19 +4,11 @@
 'use strict';
 var logger = require('pomelo-logger').getLogger('pomelo');
 
-var BattleServerInfo = function() {
-     this.ssid = -1;
-     this.ip = "";
-     this.port = -1;
-     this.netstate = -1;
-     this.service = null;
-};
-
-BattleServerInfo.prototype.unmarshal = function(jsonObj) {
-    this.ssid = parseInt(jsonObj['ssid']);
-    this.ip = jsonObj['udid'];
-    this.port = parseInt(jsonObj['port']);
-    this.netstate = parseInt(jsonObj['netstate']);
+var BattleServerInfo = function(jsonInfo) {
+    this.ssid = parseInt(jsonInfo['ssid']);
+    this.ip = jsonInfo['udid'];
+    this.port = parseInt(jsonInfo['port']);
+    this.netstate = parseInt(jsonInfo['netstate']);
 };
 
 var SSBattleServerMgr = function () {
@@ -24,14 +16,14 @@ var SSBattleServerMgr = function () {
 };
 
 SSBattleServerMgr.prototype.Add = function(info, service) {
-    var battleInfo = new BattleServerInfo();
+    var battleInfo = new BattleServerInfo(info);
     battleInfo.service = service;
     this.BattleServer_List[battleInfo.ssid] = battleInfo;
     logger.debug('BattleServer_List count: %d', Object.keys(this.BattleServer_List).length);
 };
 
 SSBattleServerMgr.prototype.Get = function(ssid) {
-    return this.BattleServer_List[ssid];
+    return this.BattleServer_List[ssid].service.connection;
 };
 
 SSBattleServerMgr.prototype.Del = function(ssid) {
