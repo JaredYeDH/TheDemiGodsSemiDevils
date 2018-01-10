@@ -1,10 +1,16 @@
 {
   "development" : {
-    "serverApiPort" : 60008,
-    "httpServerPort" : 60010
+    "GS4GCPort" : 49996,
+    "httpApiPort" : 60008,
+    "httpMonitorPort" : 60010
   },
   "production" : {
-    "serverApiPort" : 60008,
-    "httpServerPort" : 60010
+    "GS4GCPort" : 49996,
+    "httpApiPort" : 60008,
+    "httpMonitorPort" : 60010
   }
 }
+
+
+
+

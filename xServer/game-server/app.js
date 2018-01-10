@@ -36,18 +36,21 @@ app.configure('production|development', 'zgate', function(){
 	var zgate = new SocketNet;
 	if (MsgProtobuf.getInstance().loadProto()) {
 		ProtocolRegistry.register();
-		zgate.start_server(BaseService.CenterServerInfoCfg,
-			function(service){
-				CenterServerMgr.Init(service);
-			}
-		);
+		// 启动gate服务
+		zgate.start_server(BaseService.GS4GCServiceCfg, function(service){
+			CenterServerMgr.Init(service);
+		});
+		// 连接CenterServer
+		zgate.start_server(BaseService.CenterServerInfoCfg, function(service){
+			CenterServerMgr.Init(service);
+		});
 	}
 });
 
 app.configure('production|development', 'social', function() {
 	// http request service
-    var httpApiPort = GeneralConfigMan.getInstance().getConfig().serverApiPort;
-    var httpMonitorPort = GeneralConfigMan.getInstance().getConfig().httpServerPort;
+    var httpApiPort = GeneralConfigMan.getInstance().getConfig().httpApiPort;
+    var httpMonitorPort = GeneralConfigMan.getInstance().getConfig().httpMonitorPort;
     if (!httpApiPort || !httpMonitorPort) {
     	logger.error('http service port error! please check general_config.json');
         return;

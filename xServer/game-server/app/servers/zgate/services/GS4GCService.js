@@ -8,6 +8,7 @@ var logger = require('pomelo-logger').getLogger('pomelo');
 var MsgProtobuf = require('../../../../modules/MsgProtobuf');
 var CenterServerMgr = require('./../CenterServerMgr');
 var SSBattleServerMgr = require('./../SSBattleServerMgr');
+var GeneralConfigMan = require('../../../common/GeneralConfigMan');
 
 function onCnnect() {
 	this.handle = function(s) {
@@ -30,12 +31,12 @@ var Handler = {
 	"___close___"  : new onClose(),
 };
 
-var GS2GCServiceCfg = {
+var GS4GCServiceCfg = {
 	"gs2gcserviceCfg" :{
 		"is_server" : 1,
 		"handler" : Handler,
-		"serverport" : 49996
+		"serverport" : GeneralConfigMan.getInstance().getConfig().GS4GCPort
 	}
 };
 
-exports.GS2GCServiceCfg = GS2GCServiceCfg;
+exports.GS4GCServiceCfg = GS4GCServiceCfg;
