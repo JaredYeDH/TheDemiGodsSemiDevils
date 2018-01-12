@@ -1,0 +1,23 @@
+package GYBSToGC;
+
+enum MsgID
+{
+	eMsgToGCFromBS_AskGateAddressRet = 1001001;				// 返回Gate相关信息
+	eMsgToGCFromBS_OneClientLoginCheckRet = 1001002;		// 登录是否成功消息
+}
+
+message AskGateAddressRet
+{
+	optional MsgID msgid = 1 [default = eMsgToGCFromBS_AskGateAddressRet];
+	optional int32 gateclient = 2;
+	optional string token = 3;
+	optional string user_name = 4;
+	optional int32 port = 5;
+	optional string ip = 6;
+}
+
+message ClientLoginCheckRet
+{
+	optional MsgID mgsid = 1 [default = eMsgToGCFromBS_OneClientLoginCheckRet];
+	optional uint32 login_success = 2;
+}

@@ -1,0 +1,18 @@
+package GYGCToBS;
+
+enum MsgID
+{
+	eMsgToBSFromGC_Begin = 1032768;
+	eMsgToBSFromGC_OneClientLogin = 1032770;		// 向BS请求登录
+	eMsgToBSFromGC_End = 1033000;
+}
+
+message OneClientLogin
+{
+	optional MsgID msgid = 1 [default = eMsgToBSFromGC_OneClientLogin];
+	optional string uin = 2;
+	optional string sessionid = 3;
+	optional uint32 plat = 4;
+	optional uint32 login_success = 5;
+	optional uint32 nsid = 6;
+}

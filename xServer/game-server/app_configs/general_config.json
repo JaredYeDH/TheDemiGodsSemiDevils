@@ -1,11 +1,11 @@
 {
   "development" : {
-    "GS4GCPort" : 49996,
+    "GS4GCPort" : 59996,
     "httpApiPort" : 60008,
     "httpMonitorPort" : 60010
   },
   "production" : {
-    "GS4GCPort" : 49996,
+    "GS4GCPort" : 59996,
     "httpApiPort" : 60008,
     "httpMonitorPort" : 60010
   }

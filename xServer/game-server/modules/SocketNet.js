@@ -31,8 +31,11 @@ SocketNet.prototype.start_server = function(obj, cb) {
                             d.add(sock);
                             sock.c_ip= sock.remoteAddress;
                             sock.c_port= sock.remotePort;
-
-                            var _connection = new Connection({"socket" : sock});
+                            var _connection = new Connection({
+                                "c_ip" : sock.c_ip,
+                                "c_port" : sock.c_port,
+                                "socket" : sock
+                            });
                             _connection.on('data',onReceivePackData);
                             _connection.on('close',onCloseConnection);
 
@@ -41,7 +44,7 @@ SocketNet.prototype.start_server = function(obj, cb) {
                                 try {
                                     let ret = false;
                                     if(info.handler["___transmit___"]) { // 转发消息
-                                        ret = info.handler["___transmit___"].handle(msgheader, buffer);
+                                        ret = info.handler["___transmit___"].handle(_connection, msgheader, buffer);
                                     }
                                     if (!ret) { // 单独处理消息
                                         var protocolFunc = ProtocolMan.getInstance().getProtocol(msgheader._type);
@@ -88,14 +91,14 @@ SocketNet.prototype.start_server = function(obj, cb) {
 
                             sock.on("c_close",function(){
                                 if(info.handler["___close___"])
-                                    info.handler["___close___"].handle(sock);
+                                    info.handler["___close___"].handle(_connection);
                                 sock.end();
                                 sock.destroy();
                             });
 
                             sock.on("close",function(e){
                                 if(info.handler["___close___"])
-                                    info.handler["___close___"].handle(sock);
+                                    info.handler["___close___"].handle(_connection);
                                 if(!sock.destroyed) {
                                     sock.end();
                                     sock.destroy();
@@ -103,7 +106,7 @@ SocketNet.prototype.start_server = function(obj, cb) {
                             });
 
                             if(info.handler["___connect___"])
-                                info.handler["___connect___"].handle(sock);
+                                info.handler["___connect___"].handle(_connection);
 
                             //超过60s未发心跳包 断开连接
                             sock.setTimeout(1*60*1000);
@@ -206,7 +209,7 @@ SocketNet.prototype.start_server = function(obj, cb) {
                                 connectserver();
                             } else if (socketClient.connectStatus) {
                                 let _now = Date.now();
-                                if (_now - socketClient.lastHeartBeatTime > 30*1000) {
+                                if (_now - socketClient.lastHeartBeatTime > 90*1000) {
                                     if(info.handler["___heartbeat___"])
                                         info.handler["___heartbeat___"].handle();
                                     /*

@@ -6,7 +6,7 @@ var logger = require('pomelo-logger').getLogger('pomelo');
 
 var BattleServerInfo = function(jsonInfo) {
     this.ssid = parseInt(jsonInfo['ssid']);
-    this.ip = jsonInfo['udid'];
+    this.ip = jsonInfo['ip'];
     this.port = parseInt(jsonInfo['port']);
     this.netstate = parseInt(jsonInfo['netstate']);
 };

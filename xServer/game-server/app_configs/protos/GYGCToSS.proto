@@ -2,20 +2,20 @@ package GYGCToSS;
 
 enum MsgID
 {
-	eMsgToGSToSSFromGC_Begin = 16384;
-	eMsgToGSToSSFromGC_AskMoveDir = 16385;	// 请求移动
-	eMsgToGSToSSFromGC_AskChangeChunk = 16386;	// 请求切换地图块
-	eMsgToGSToSSFromGC_AskStopMove = 16387;	// 请求停止移动
-	eMsgToGSToSSFromGC_AskUseSkill = 16388;	// 请求使用技能
-	eMsgToGSToSSFromGC_CombineSkill = 16389;	// 往英雄技能槽位放技能
-	eMsgToGSToSSFromGC_EquipSkill = 16390;		// 往释放技能槽位放技能
+	eMsgToGSToSSFromGC_Begin = 1016384;
+	eMsgToGSToSSFromGC_AskMoveDir = 1016385;	// 请求移动
+	eMsgToGSToSSFromGC_AskChangeChunk = 1016386;	// 请求切换地图块
+	eMsgToGSToSSFromGC_AskStopMove = 1016387;	// 请求停止移动
+	eMsgToGSToSSFromGC_AskUseSkill = 1016388;	// 请求使用技能
+	eMsgToGSToSSFromGC_CombineSkill = 1016389;	// 往英雄技能槽位放技能
+	eMsgToGSToSSFromGC_EquipSkill = 1016390;		// 往释放技能槽位放技能
 
-	eMsgToGSToSSFromGC_AskDungeonExecuteEvent = 16391; // 副本中执行事件
-	eMsgToGSToSSFromGC_AskNextDungeonEventUnit = 16392; // 请求下一个事件单位ID
-	eMsgToGSToSSFromGC_AskNextDungeonFloor = 16393; 	// 切换到下一层
-	eMsgToGSToSSFromGC_AskPickUpItem = 16394;           // 请求捡起物品
+	eMsgToGSToSSFromGC_AskDungeonExecuteEvent = 1016391; // 副本中执行事件
+	eMsgToGSToSSFromGC_AskNextDungeonEventUnit = 1016392; // 请求下一个事件单位ID
+	eMsgToGSToSSFromGC_AskNextDungeonFloor = 1016393; 	// 切换到下一层
+	eMsgToGSToSSFromGC_AskPickUpItem = 1016394;           // 请求捡起物品
 	
-	eMsgToGSToSSFromGC_End = 17000;			// 结束符
+	eMsgToGSToSSFromGC_End = 1017000;			// 结束符
 }
 
 // 位置信息 单位 厘米
@@ -115,6 +115,6 @@ message AskNextDungeonFloor
 message AskPickUpItem
 {
 	optional MsgID msgid = 1 [default = eMsgToGSToSSFromGC_AskPickUpItem];
-	optional string itemGuid = 2;   // 要拾起的物品guid
+	repeated string itemGuids = 2;   // 要拾起的物品guid
 }
 

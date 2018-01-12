@@ -2,17 +2,17 @@ package GYGCToCS;
 
 enum MsgID
 {
-	eMsgToGSToCSFromGC_Begin = 8191;
-	eMsgToGSToCSFromGC_AskLogin = 8193;			// 请求登录
-	eMsgToGSToCSFromGC_AskReconnectGame = 8194; // 断线重连
-	eMsgToGSToCSFromGC_SelectRole = 8195;		// 选择角色进入场景 
-	eMsgToGSToCSFromGC_AskCreateDungeon = 8196;	// 请求创建副本
-	eMsgToGSToCSFromGC_AskEnterDungeon = 8197;// 请求副本内容对象
-	eMsgToGSToCSFromGC_QuitGame = 8999;			// 退出游戏，临时
+	eMsgToGSToCSFromGC_Begin = 1008191;
+	eMsgToGSToCSFromGC_AskLogin = 1008193;			// 请求登录
+	eMsgToGSToCSFromGC_AskReconnectGame = 1008194; // 断线重连
+	eMsgToGSToCSFromGC_SelectRole = 1008195;		// 选择角色进入场景 
+	eMsgToGSToCSFromGC_AskCreateDungeon = 1008196;	// 请求创建副本
+	eMsgToGSToCSFromGC_AskEnterDungeon = 1008197;// 请求副本内容对象
+	eMsgToGSToCSFromGC_QuitGame = 1008999;			// 退出游戏，临时
 	
 
 	//结束符
-	eMsgToGSToCSFromGC_End = 9000;
+	eMsgToGSToCSFromGC_End = 1009000;
 }
 
 message AskLogin
@@ -43,7 +43,7 @@ message QuitGame
 	optional MsgID msgid = 1 [default = eMsgToGSToCSFromGC_QuitGame];
 }
 
-message AskDungeonObjects
+message AskEnterDungeon
 {
 	optional MsgID msgid = 1 [default = eMsgToGSToCSFromGC_AskEnterDungeon];
 }

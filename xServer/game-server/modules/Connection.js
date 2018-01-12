@@ -7,10 +7,19 @@ var NetBuffer = require('./NetBuffer');
 
 var Connection = function(options) {
     var self = this;
+    this.c_ip = options.c_ip;
+    this.c_port = options.c_port;
+    this.c_sessionid = options.c_sessionid || 0;
     this.socket = options.socket;
     this.netbuffer = new NetBuffer();
 
     this.on('error', options.onError || onError);
+    this.setSessionId = function(clientSessionId) {
+        self.c_sessionid = clientSessionId;
+    }
+    this.getSessionId = function() {
+        return self.c_sessionid;
+    }
 
     /***
      * Called whenever the socket receives data from the EventStore.
@@ -79,16 +88,17 @@ Connection.prototype.sendHeartBeat = function() {
 
 };
 
-Connection.prototype.sendMessage = function(command, buffer) {
+Connection.prototype.sendMessage = function(command, buffer, clientSessionId) {
+    var self = this;
     var _msgHeader = new MsgHeader().littleEndian();
     _msgHeader._size = _msgHeader.size() + buffer.length;
     _msgHeader._type = command;
+    _msgHeader._gSrSessionId = clientSessionId || self.getSessionId();
 
     var _newbuffer = new Buffer(_msgHeader._size);
     _msgHeader.fill(_newbuffer);
     _newbuffer.fill(buffer, _msgHeader.size())
 
-    var self = this;
     if(self.socket.writable) {
         self.socket.write(_newbuffer);
         /*

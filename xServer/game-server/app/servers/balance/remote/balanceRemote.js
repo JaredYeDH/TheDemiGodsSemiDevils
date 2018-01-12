@@ -13,7 +13,7 @@ var balanceRemote = function(app) {
 balanceRemote.prototype.getGateServer = function(uid, sid, cb) {
     var _gateinfo = {
         ip : "192.168.30.100",
-        port : 49996,
+        port : 59996,
         status : 2
     };
     cb && cb(_gateinfo);

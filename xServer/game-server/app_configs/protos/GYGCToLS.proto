@@ -1,0 +1,17 @@
+package GYGCToLS;
+
+enum MsgID
+{
+	eMsgToLSFromGC_Begin = 1040960;
+	eMsgToLSFromGC_AskLogin = 1040961;
+	eMsgToLSFromGC_End = 1040970;
+}
+
+// 请求登录
+message AskLogin
+{
+	optional MsgID msgid = 1[default = eMsgToLSFromGC_AskLogin];
+	optional int32 platform = 2;
+	optional string uin = 3;
+	optional string sessionid = 4;
+}

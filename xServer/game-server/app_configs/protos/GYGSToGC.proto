@@ -2,42 +2,36 @@ package GYGSToGC;
 
 enum MsgID
 {
-	eMsgToGCFromGS_Begin = 0;
-	eMsgToGCFromGS_UserData = 1;				// 用户数据
-	eMsgToGCFromGS_PlayerLoginData = 2;			// 角色登录相关数据
-	eMsgToGCFromGS_NotifySelectRole = 3;		// 通知客户端选择角色成功
-	eMsgToGCFromGS_NotifyObjectAttribute = 4; 	// 角色属性变化
-	eMsgToGCFromGS_GCAskRet = 5;                // 消息转接            
-	eMsgToGCFromGS_MoveState = 101;				// 移动状态
-	eMsgToGCFromGS_FreeState = 102;				// 空闲状态
-	eMsgToGCFromGS_ReleaseSkillState = 104;		// 技能前摇状态
-	eMsgToGCFromGS_DeadState = 105;				// 死亡状态
+	eMsgToGCFromGS_Begin = 1000000;
+	eMsgToGCFromGS_UserData = 1000001;				// 用户数据
+	eMsgToGCFromGS_PlayerLoginData = 1000002;			// 角色登录相关数据
+	eMsgToGCFromGS_NotifySelectRole = 1000003;		// 通知客户端选择角色成功
+	eMsgToGCFromGS_NotifyObjectAttribute = 1000004; 	// 角色属性变化
+	eMsgToGCFromGS_GCAskRet = 1000005;                // 消息转接            
+	eMsgToGCFromGS_MoveState = 1000101;				// 移动状态
+	eMsgToGCFromGS_FreeState = 1000102;				// 空闲状态
+	eMsgToGCFromGS_ReleaseSkillState = 1000104;		// 技能前摇状态
+	eMsgToGCFromGS_DeadState = 1000105;				// 死亡状态
 	
-	eMsgToGCFromGS_NotifyCombineSkill = 111;	// 通知组合技能槽位变化
-	eMsgToGCFromGS_NotifyEquipSkill = 112;		// 通知装配技能槽位变化
-	eMsgToGCFromGS_NotifyUpdateDungeonObjectEntityEvent = 113; // 通知更新副本事件进度
+	eMsgToGCFromGS_NotifyCombineSkill = 1000111;	// 通知组合技能槽位变化
+	eMsgToGCFromGS_NotifyEquipSkill = 1000112;		// 通知装配技能槽位变化
+	eMsgToGCFromGS_NotifyUpdateDungeonObjectEntityEvent = 1000113; // 通知更新副本事件进度
 	
-	eMsgToGCFromGS_CreateBullet = 201;			// 创建子弹
-	eMsgToGCFromGS_DestroyBullet = 202;			// 销毁子弹
+	eMsgToGCFromGS_CreateBullet = 1000201;			// 创建子弹
+	eMsgToGCFromGS_DestroyBullet = 1000202;			// 销毁子弹
 	
-	eMsg_Empty203 = 203;							// 占位
-	eMsg_Empty204 = 204;							// 占位
+	eMsgToGCFromGS_NotifyHpChange = 1000205;		// 血量变化
+	eMsgToGCFromGS_NotifyMpChange = 1000206;		// 气量变化
 	
+	eMsgToGCFromGS_NotifyObjectAppear = 1000207;	// 通知创建新的Object
+	eMsgToGCFromGS_NotifyObjectDisapper = 1000208;  // 通知实体消失
+	eMsgToGCFromGS_NotifyCreateDungeon = 1000209; 	// 通知创建副本
+	eMsgToGCFromGS_NotifyEnterDungeon = 1000210;	// 通知进入副本
+	eMsgToGCFromGS_NotifyNextDungeonFloor = 1000211;	// 通知进入下一层，这个消息是否真的需要，需要和服务器对
+	eMsgToGCFromGS_NotifySkillBagDataUpdate= 1000212; 	// 通知技能背包数据变化
+	eMsgToGCFromGS_NotifyItemDataUpdate = 1000213;		// 通知物品数据变化
 	
-	eMsgToGCFromGS_NotifyHpChange = 205;		// 血量变化
-	eMsgToGCFromGS_NotifyMpChange = 206;		// 气量变化
-	
-	eMsgToGCFromGS_NotifyObjectAppear = 207;	// 通知创建新的Object
-	eMsgToGCFromGS_NotifyObjectDisapper = 208;  // 通知实体消失
-	eMsgToGCFromGS_NotifyCreateDungeon = 209; 	// 通知创建副本
-	eMsgToGCFromGS_NotifyEnterDungeon = 210;	// 通知进入副本
-	eMsgToGCFromGS_NotifyNextDungeonFloor = 211;	// 通知进入下一层，这个消息是否真的需要，需要和服务器对
-	eMsgToGCFromGS_NotifySkillBagDataUpdate= 212; 	// 通知技能背包数据变化
-	
-	eMsg_Empty512 = 512;							// 占位
-	eMsg_Empty513 = 513;							// 占位
-	
-	eMsgToGCFromGS_End = 1000;
+	eMsgToGCFromGS_End = 1001000;
 }
 
 //服务器中间转接
@@ -92,7 +86,7 @@ message PlayerData
 	optional PlayerBaseData playerBaseData = 1;
 	optional SkillData skillData = 2;	// 技能数据
 	repeated HeroData heros = 3;		// 英雄数据
-	repeated ItemData items = 4;		// 物品数据（先不做）
+	repeated ItemData items = 4;		// 物品数据
 }
 
 // 角色基础数据
@@ -126,7 +120,14 @@ message ItemData
 {
 	optional string guid = 1;
 	optional int32 id = 2;
-	optional int32 used = 3;	// 是否被使用，技能书放置了
+	optional int32 count = 3;		// 物品数量
+}
+
+// 通知物品数据变化
+message NotifyItemDataUpdate
+{
+	optional MsgID msgid = 1 [default = eMsgToGCFromGS_NotifyItemDataUpdate];
+	repeated ItemData itemData = 2;		// 变化的物品数据，这里放物品的最终数量，不是变化
 }
 
 // 角色、英雄技能列表数据
@@ -170,7 +171,7 @@ message SkillData
 message NotifySkillBagDataUpdate
 {
 	optional MsgID msgid = 1 [default = eMsgToGCFromGS_NotifySkillBagDataUpdate];
-	repeated SkillBagData skillBagData = 2;		// 变化的技能数据
+	repeated SkillBagData skillBagData = 2;		// 变化的技能数据，这里放技能的最终数量，不是变化
 }
 
 // 角色英雄数据

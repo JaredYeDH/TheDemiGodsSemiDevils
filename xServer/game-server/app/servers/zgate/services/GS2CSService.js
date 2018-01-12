@@ -7,6 +7,7 @@ var pomelo = require('pomelo');
 var logger = require('pomelo-logger').getLogger('pomelo');
 var MsgProtobuf = require('../../../../modules/MsgProtobuf');
 var CenterServerMgr = require('./../CenterServerMgr');
+var ClientConnctionMgr = require('../ClientConnctionMgr');
 
 function onConnect() {
 	this.handle = function(s) {
@@ -51,8 +52,13 @@ function onTransmit() {
             let protoNameSpace = MsgProtobuf.getInstance().Messages('GYGSToGC');
             if (msgheader._type > protoNameSpace.MsgID.eMsgToGCFromGS_Begin
                 && msgheader._type < protoNameSpace.MsgID.eMsgToGCFromGS_End) {
-                CenterServerMgr.getDao().sendMessage(msgheader._type, buffer);
-                logger.warn("gate server transmit center msg to client, detail:"+JSON.stringify(msgheader));
+                let clientConnection = ClientConnctionMgr.getInstance().Get(msgheader._gSrSessionId);
+                if (clientConnection) {
+                    clientConnection.sendMessage(msgheader._type, buffer);
+                    logger.warn("gate server transmit center msg to client, detail:"+JSON.stringify(msgheader));
+                } else {
+                    logger.error("gate server transmit center msg to client failed, detail:"+JSON.stringify(msgheader));
+                }
                 ret = true;
             }
         } while(0);
