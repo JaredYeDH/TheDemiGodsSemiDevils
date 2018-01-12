@@ -4,6 +4,7 @@ var uuid = require('node-uuid');
 var logger = require('pomelo-logger').getLogger('pomelo');
 var MsgHeader = require('./MsgHeader');
 var NetBuffer = require('./NetBuffer');
+var NetDataStatus = require('./NetDataStatus');
 
 var Connection = function(options) {
     var self = this;
@@ -31,9 +32,13 @@ var Connection = function(options) {
         self.netbuffer.push(data);
         do {
             var msg = self.netbuffer.pop();
-            if (!msg.datast) {
+            if (msg.datast === NetDataStatus.NDS_INVALID) {
                 logger.error('Invalid message length msgtype:%d, msgsize:%d', msg.header._type, msg.header._size);
                 self.onClose();
+                break;
+            }
+            if (msg.datast === NetDataStatus.NDS_NONE) {
+                logger.debug('none readable messages.');
                 break;
             }
             if (!Boolean(msg.data)) {

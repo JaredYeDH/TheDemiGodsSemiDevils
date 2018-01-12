@@ -1,5 +1,6 @@
 var logger = require('pomelo-logger').getLogger('pomelo');
 var GlobalProto = require('./GlobalProto');
+var NetDataStatus = require('./NetDataStatus');
 
 /*
  * 构造方法
@@ -85,7 +86,7 @@ var NetBuffer = function (bufferLength) {
     }
 
     this.pop = function() {
-        let datastatus = true; // true:正常 false:消息大小超出最大范围
+        let datastatus = NetDataStatus.NDS_NONE;
         let databuff = null;
         let msgheader = GlobalProto.Instance().msgHeader();
         do {
@@ -113,7 +114,7 @@ var NetBuffer = function (bufferLength) {
             }
 
             if (msgheader._size > GlobalProto.Instance().maxMsgLength()) { // 消息大小超出最大范围
-                datastatus = false;
+                datastatus = NetDataStatus.NDS_INVALID;
                 break;
             }
             
@@ -133,6 +134,7 @@ var NetBuffer = function (bufferLength) {
                 _buffer.copy(databuff, len1, 0, len2);
                 _readOffset = len2;
             }
+            datastatus = NetDataStatus.NDS_SUCCESS;
         } while(0);
         return {datast: datastatus, header: msgheader, data: databuff};
     }
@@ -145,7 +147,7 @@ var NetBuffer = function (bufferLength) {
     }
 };
 
-module.exports = exports = NetBuffer;
+module.exports = NetBuffer;
 
 
 
