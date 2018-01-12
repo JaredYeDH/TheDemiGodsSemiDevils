@@ -18,15 +18,17 @@ function onCnnect() {
 			logger.warn('------------------------------- rpc test res : ' + res);
 		});
         connection.setSessionId(ClientConnctionMgr.getInstance().GenerateSessionId());
-        ClientConnctionMgr.getInstance().Add(connection.getSessionId(), connection);
-        logger.debug("onCnnection, ip : "+connection.c_ip+",port:"+ connection.c_port + " sessionid : " + connection.getSessionId());
+        let clientSessionId = connection.getSessionId();
+        ClientConnctionMgr.getInstance().Add(clientSessionId, connection);
+        logger.debug("onCnnection client sessionId:%d, ip:%s, port:%d", clientSessionId, connection.c_ip, connection.c_port);
 	}
 }
 
 function onClose() {
 	this.handle = function(connection) {
-        ClientConnctionMgr.getInstance().Del(connection.getSessionId());
-        logger.debug("onClose client connection sessionId:%d, ip:%connection, port:%d", connection.getSessionId(), connection.c_ip, connection.c_port);
+        let clientSessionId = connection.getSessionId();
+        ClientConnctionMgr.getInstance().Del(clientSessionId);
+        logger.debug("onClose client connection sessionId:%d, ip:%s, port:%d", clientSessionId, connection.c_ip, connection.c_port);
 	}
 }
 
@@ -37,7 +39,9 @@ function onTransmit() {
             let protoNameSpace = MsgProtobuf.getInstance().Messages('GYGCToCS');
             if (msgheader._type > protoNameSpace.MsgID.eMsgToGSToCSFromGC_Begin
                 && msgheader._type < protoNameSpace.MsgID.eMsgToGSToCSFromGC_End) {
-                CenterServerMgr.getDao().sendMessage(msgheader._type, buffer, connection.getSessionId());
+                let clientSessionId = connection.getSessionId();
+                CenterServerMgr.getDao().sendMessage(msgheader._type, buffer, clientSessionId);
+                msgheader._gSrSessionId = clientSessionId;
                 logger.debug("gate server transmit msg to center server, detail:"+JSON.stringify(msgheader));
                 ret = true;
                 break;
@@ -45,7 +49,9 @@ function onTransmit() {
             protoNameSpace = MsgProtobuf.getInstance().Messages('GYGCToSS');
             if (msgheader._type > protoNameSpace.MsgID.eMsgToGSToSSFromGC_Begin
                 && msgheader._type < protoNameSpace.MsgID.eMsgToGSToSSFromGC_End) {
-                SSBattleServerMgr.getInstance().Get(20001).sendMessage(msgheader._type, buffer, connection.getSessionId());
+                let clientSessionId = connection.getSessionId();
+                SSBattleServerMgr.getInstance().Get(20001).sendMessage(msgheader._type, buffer, clientSessionId);
+                msgheader._gSrSessionId = clientSessionId;
                 logger.debug("gate server transmit msg to battlemgr server, detail:"+JSON.stringify(msgheader));
                 ret = true;
             }

@@ -55,7 +55,7 @@ function onTransmit() {
                 let clientConnection = ClientConnctionMgr.getInstance().Get(msgheader._gSrSessionId);
                 if (clientConnection) {
                     clientConnection.sendMessage(msgheader._type, buffer);
-                    logger.warn("gate server transmit center msg to client, detail:"+JSON.stringify(msgheader));
+                    logger.debug("gate server transmit center msg to client, detail:"+JSON.stringify(msgheader));
                 } else {
                     logger.error("gate server transmit center msg to client failed, detail:"+JSON.stringify(msgheader));
                 }
