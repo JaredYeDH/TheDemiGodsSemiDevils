@@ -90,8 +90,10 @@ SocketNet.prototype.start_server = function(obj, cb) {
                             });
 
                             sock.on("c_close",function(){
+                                /* 处理一次即可 sock.end(); 触发close事件 sock.on("close", ..) 中处理断开连接逻辑
                                 if(info.handler["___close___"])
                                     info.handler["___close___"].handle(_connection);
+                                */
                                 sock.end();
                                 sock.destroy();
                             });

@@ -27,8 +27,8 @@ function onCnnect() {
 function onClose() {
 	this.handle = function(connection) {
         let clientSessionId = connection.getSessionId();
-        ClientConnctionMgr.getInstance().Del(clientSessionId);
         logger.debug("onClose client connection sessionId:%d, ip:%s, port:%d", clientSessionId, connection.c_ip, connection.c_port);
+        ClientConnctionMgr.getInstance().Del(clientSessionId);
 	}
 }
 
