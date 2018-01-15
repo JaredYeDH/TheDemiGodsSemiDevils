@@ -1,0 +1,64 @@
+{
+  "apps": [
+    {
+      "name": "master",
+      "script": "./app.js",
+      "exec_mode": "fork_mode",
+      "error_file": "./pm2logs/master-err.log",
+      "out_file": "./pm2logs/master-out.log",
+      "pid_file": "./pm2logs/master.pid",
+      "watch": false,
+	  "args": ["env=development", "serverType=master", "id=master-server-1", "mode=stand-alone"]
+    },
+	{
+      "name": "connector",
+      "script": "./app.js",
+      "exec_mode": "fork_mode",
+      "error_file": "./pm2logs/connector-err.log",
+      "out_file": "./pm2logs/connector-out.log",
+      "pid_file": "./pm2logs/connector.pid",
+      "watch": false,
+  	  "args": ["env=development", "serverType=connector", "id=connector-server-1", "host=127.0.0.1", "port=3150", "clientHost=127.0.0.1", "clientPort=3010", "frontend=true", "secure=false", "mode=stand-alone"]
+    },
+	{
+      "name": "zgate",
+      "script": "./app.js",
+      "exec_mode": "fork_mode",
+      "error_file": "./pm2logs/zgate-err-1.log",
+      "out_file": "./pm2logs/zgate-out-1.log",
+      "pid_file": "./pm2logs/zgate-1.pid",
+      "watch": false,
+  	  "args": ["--max-old-space-size=4096", "env=development", "serverType=zgate", "id=zgate-server-1", "host=127.0.0.1", "port=5001", "mode=stand-alone"]
+    },
+	{
+      "name": "logic",
+      "script": "./app.js",
+      "exec_mode": "fork_mode",
+      "error_file": "./pm2logs/logic-err.log",
+      "out_file": "./pm2logs/logic-out.log",
+      "pid_file": "./pm2logs/logic.pid",
+      "watch": false,
+  	  "args": ["env=development", "serverType=logic", "name=logic-server-1", "id=logic-server-1", "host=127.0.0.1", "port=6001", "mode=stand-alone"]
+    },
+	{
+      "name": "social",
+      "script": "./app.js",
+      "exec_mode": "fork_mode",
+      "error_file": "./pm2logs/social-err.log",
+      "out_file": "./pm2logs/social-out.log",
+      "pid_file": "./pm2logs/social.pid",
+      "watch": false,
+  	  "args": ["env=development", "serverType=social", "name=social-server-1", "id=social-server-1", "host=127.0.0.1", "port=7001", "mode=stand-alone"]
+    },
+  {
+      "name": "balance",
+      "script": "./app.js",
+      "exec_mode": "fork_mode",
+      "error_file": "./pm2logs/balance-err.log",
+      "out_file": "./pm2logs/balance-out.log",
+      "pid_file": "./pm2logs/balance.pid",
+      "watch": false,
+      "args": ["env=development", "serverType=balance", "name=balance-server-1", "id=balance-server-1", "host=127.0.0.1", "port=8001", "mode=stand-alone"]
+    }
+  ]
+}
