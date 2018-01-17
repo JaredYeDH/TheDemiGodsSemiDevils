@@ -7,7 +7,7 @@ var logger = require('pomelo-logger').getLogger('pomelo');
 var m = require('mongodb');
 Promise.promisifyAll(m);
 var mongo = m.MongoClient;
-var MongoTables = require('../Enum/MongoTables');
+var MongoTables = require('../enum/MongoTables');
 
 var PersistentDao = function(mongoConfig) {
     var host = mongoConfig.host || '127.0.0.1';

@@ -4,7 +4,7 @@ var express = require("express");
 var bodyParser = require('body-parser');
 var Redis = require('ioredis');
 var GeneralConfigMan = require("./app/common/GeneralConfigMan");
-var PersistentDao = require('./app/common/Dao/PersistentDao');
+var PersistentDao = require('./app/common/dao/PersistentDao');
 
 /**
  * Init app for client.
