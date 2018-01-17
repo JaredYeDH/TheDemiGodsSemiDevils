@@ -2,7 +2,9 @@ var pomelo = require('pomelo');
 var logger = require('pomelo-logger').getLogger('pomelo');
 var express = require("express");
 var bodyParser = require('body-parser');
+var Redis = require('ioredis');
 var GeneralConfigMan = require("./app/common/GeneralConfigMan");
+var PersistentDao = require('./app/common/Dao/PersistentDao');
 
 /**
  * Init app for client.
@@ -22,9 +24,15 @@ app.configure('production|development', 'connector', function(){
 });
 
 app.configure('production|development', 'master|connector|zgate|logic|social|balance', function () {
-    var env = app.get('env');
+    let env = app.get('env');
     logger.info("env is " + env);
+
     GeneralConfigMan.getInstance().loadConfig(env);
+    let generalConfig = GeneralConfigMan.getInstance().getConfig();
+    app.set('redisClient', new Redis(generalConfig.redisConfig));
+    app.set('redisPub', new Redis(generalConfig.redisConfig));
+    app.set('redisSub', new Redis(generalConfig.redisConfig));
+    app.set("persistentDao", new PersistentDao(generalConfig.mongoDBConfig));
 });
 
 app.configure('production|development', 'zgate', function(){
