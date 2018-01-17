@@ -115,9 +115,19 @@ AccountsDao.prototype.delVerifyedAccount = function(platformType, osType, udid) 
     }
     return this.redisClient.hdel(TableName, udid);
 }
-
+/*
 module.exports = {
     getDao: function() {
         return new AccountsDao();
+    }
+};
+*/
+var _accountsDaoInstance = null;
+module.exports = {
+    getDao: function() {
+        if(!Boolean(_accountsDaoInstance instanceof AccountsDao)) {
+            _accountsDaoInstance = new AccountsDao();
+        }
+        return _accountsDaoInstance;
     }
 };
