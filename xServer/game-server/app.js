@@ -52,6 +52,24 @@ app.configure('production|development', 'zgate', function(){
 		zgate.start_server(BaseService.CenterServerInfoCfg, function(service){
 			CenterServerMgr.Init(service);
 		});
+		// test redis
+		/*
+		var AccountsDao = require('./app/common/dao/AccountsDao');
+		AccountsDao.getDao().setVerifyedAccount(0, 0, 'xxxxxxxxxxx', {a: "a", b: "b"});
+		*/
+		// test mongodb
+		/*
+		var testPersistant = function(){
+			var persistent = require('pomelo').app.get("persistentDao");
+			persistent.getPlayerIdCount(function(data) {
+				logger.warn('------------' + data);
+			})
+			persistent.savePlayerId(999999, {a: "a", b: "b"});
+		}
+        setTimeout(() => {
+            testPersistant()
+        }, 6000);
+        */
 	}
 });
 

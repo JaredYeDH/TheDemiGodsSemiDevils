@@ -11,28 +11,28 @@ var MongoTables = require('../enum/MongoTables');
 
 var PersistentDao = function(mongoConfig) {
     var host = mongoConfig.host || '127.0.0.1';
-    var port = mongoConfig.port || 27019;
+    var port = mongoConfig.port || 27017;
     var user = mongoConfig.user;
     var password = mongoConfig.password;
     var dbName = mongoConfig.db;
     var self = this;
-    var mongoUrl = "mongodb://" + host + ":" + port + "/" + dbName;
+    var mongoUrl = "mongodb://" + host + ":" + port;
     logger.info("connect mongoUrl:", mongoUrl);
-    mongo.connect(mongoUrl, function(err, db) {
+    mongo.connect(mongoUrl, function(err, client) {
         if (err) {
             logger.error("connect to %s fail with err %s", mongoUrl, err);
             return;
         }
         if (!user || !password) {
-            self.db = db;
+            self.db = client.db(dbName);
             return;
         }
-        db.authenticate(user, password, function(err) {
+        client.authenticate(user, password, function(err) {
             if (err) {
                 logger.error("auth %s fail with err %s", mongoUrl, err);
                 return;
             }
-            self.db = db;
+            self.db = client.db(dbName);
         });
     });
 };
